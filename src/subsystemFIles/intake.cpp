@@ -5,8 +5,8 @@ void setIntake(int power) { //intake power (I need to figure out how to reverse 
     //Need to only do one motor and let it reverse ofc
     //figuring out like the triggers 
     //in globals: true is negative and false is positive
-    intake = power;
-    belt = power;
+    intake.move_voltage(power);
+    belt.move_voltage(power);
 }
 
 //driver controller functions

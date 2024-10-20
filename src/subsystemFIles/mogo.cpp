@@ -12,7 +12,9 @@
 ////TBH IM COPYING THE FORMAT FOR INTAKE I HAVE NO CLUE WHAT IM DONG//////
 
 void setMogo(bool extend) {
-    piston = extend;
+  //  pnuematicOne.set_value(extend); //not sure if this works
+    pneumaticTwo.set_value(extend);
+    pnuematicOne.set_value(extend);
 }
 
 void setMogoSolenoids(bool extend) {
@@ -22,7 +24,7 @@ void setMogoSolenoids(bool extend) {
         extendPiston = !extendPiston;
     }
     setMogo(extendPiston);
-    pros.delay(20);
+    pros::delay(20);
     
 }
 

@@ -12,7 +12,7 @@ extern pros::Motor belt;
 
 /// HELPEHEEPLELPE
 //LMFAO HOW DO U DO PNUEMATICS!?!?
-extern pros::adi::DigitalOut pneumaticOne;
+extern pros::adi::DigitalOut pnuematicOne;
 extern pros::adi::DigitalOut pneumaticTwo;
 
 //leftside drive
@@ -30,4 +30,4 @@ extern pros::Controller controller;
 
 //miscellaneous
 //extern pros::ADIGyro gyro;
-extern pros::Imu imu_sensor;
+extern pros::IMU inertial_sensor;

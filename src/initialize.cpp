@@ -37,20 +37,20 @@ void initialize() {
 
     // HOW DO PNUEMATICS?!?!?
 
-    // gyro
-    // gyro
-    // pros::ADIGyro gyro('C', 1);
-    pros::intertial_sensor.reset();
-    pros::delay(2000);  // needs 2 seconds to calibrate sensor.
+    
+    // gyro/IMU thingy
+    inertial_sensor.reset();          // Reset the inertial sensor
+    pros::delay(2000);
+
+     // needs 2 seconds to calibrate sensor.
     // gyros help to somewhat like correct urself
-    // left turn is negative and right is positive---> will need to fix
 }
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
- */
+ */ 
 void disabled() {
     // kill task
     // delay
