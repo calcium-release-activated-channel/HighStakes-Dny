@@ -37,8 +37,8 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 // pros::ADIDigitalOut pnuematicOne('A'); //A is like the port it should be plugged into...? idk
 // pros::ADIDigitalOut pnuematicTwo('B');                              //B is like the port thing it should be plugged into? idk adding anoteher motor
 
-pros::adi::DigitalOut pnuematicOne('A');
-pros::adi::DigitalOut pnuematicTwo('B');
+pros::adi::DigitalOut pneumaticOne('A');
+pros::adi::DigitalOut pneumaticTwo('B');
  
 
 

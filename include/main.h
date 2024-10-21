@@ -35,6 +35,34 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
+/**
+ * Function Declarations from intake.hpp
+ */
+void setIntake(int power);
+void setIntakeMotors();
+
+/**
+ * Function Declarations from mogo.hpp
+ */
+void setMogo(bool extend);   //was before int p
+void setMogoSolenoids();  //was before ()
+/**
+ * Function Declarations from drive.hpp
+ * (Add any necessary drive function declarations here)
+ */
+//HELPER functions
+void setDrive(int left, int right);
+
+void resetDriveEncoders();
+double averageDriveEncoderValue();
+//declaring functions
+
+void setDriveMotors();
+
+//autonomous sections
+void translate(int units, int voltage); //coordinate plane system
+void rotate(int degrees, int voltage);
+
 
 /**
  * You should add more #includes here
@@ -78,10 +106,14 @@ void opcontrol(void);
 #endif
 
 //include all our mechanisms so we have access to them
-#include "subsystemHeaders/drive.hpp"
+//INTEGRATION HELL
+/*
 #include "subsystemHeaders/intake.hpp"
+#include "subsystemHeaders/drive.hpp"
 #include "subsystemHeaders/belt.hpp"
 #include "subsystemHeaders/globals.hpp"
 #include "subsystemHeaders/mogo.hpp"
+*/
+#include "subsystemHeaders/globals.hpp"
 
 #endif  // _PROS_MAIN_H_

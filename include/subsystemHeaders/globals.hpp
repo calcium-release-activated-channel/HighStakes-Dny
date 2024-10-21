@@ -12,7 +12,7 @@ extern pros::Motor belt;
 
 /// HELPEHEEPLELPE
 //LMFAO HOW DO U DO PNUEMATICS!?!?
-extern pros::adi::DigitalOut pnuematicOne;
+extern pros::adi::DigitalOut pneumaticOne;
 extern pros::adi::DigitalOut pneumaticTwo;
 
 //leftside drive

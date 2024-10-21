@@ -79,7 +79,8 @@ void translate(int units, int voltage) {
     
     //reset motor encoder- reset to 0 and then go more
     resetDriveEncoders();
-    inertial_sensor.reset();
+    inertial_sensor.tare_yaw();
+   // inertial_sensor.reset();
 
     //drive forward until units are reached
     while(averageDriveEncoderValue() < abs(units)) {  //may review
@@ -95,9 +96,41 @@ void translate(int units, int voltage) {
     }
 
     //brief brake
-    setDrive(-10 * direction,-10 * direction);
+    setDrive(-10 * direction,-10 * direction); //may change multiplier depending on units
     pros::delay(50); // (this can vary depending on heavy our bot is..)
     //set drive back to nuetral
     setDrive(0,0);
 
 } //end of translate
+//
+
+void rotate(int degrees, int voltage) {
+    //define direction, based on units provided (either +  or -)
+    int direction =  abs(degrees) / degrees;
+            //like a unit circle i think where positive is left and negative is right
+    //resetting the IMU gyro
+    inertial_sensor.tare_yaw();
+    //turn until units reached
+    while (fabs(inertial_sensor.get_yaw()) < abs(degrees - 5)) { //-5 so we can not overshoot as much
+        setDrive(-voltage * direction, voltage * direction);
+        pros::delay(10);
+    }
+    setDrive(0,0);
+    //correcting overshoot (same thing but alot slower) 
+    pros::delay(100); //may change  
+    if (fabs(inertial_sensor.get_yaw()) > abs(degrees)) {
+        while (fabs(inertial_sensor.get_yaw()) > abs(degrees)) {
+        setDrive(0.5 * voltage * direction, 0.5 * -voltage * direction); //slower
+        pros::delay(10);
+    }
+    } else if(fabs(inertial_sensor.get_yaw()) < abs(degrees)) { //undershoot
+        while (fabs(inertial_sensor.get_yaw()) < abs(degrees)) { //may need to change < to >
+        setDrive(0.5 * -voltage * direction, 0.5 * voltage * direction); //slower
+        pros::delay(10);
+    }
+    }
+
+    //brief brake? 
+    //reset drive to 0
+    setDrive(0,0);
+}

@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 //helper function
 //void setIntake(int power) { //intake power (I need to figure out how to reverse and forward)
     //Need to only do one motor and let it reverse ofc
@@ -14,10 +15,10 @@
 void setMogo(bool extend) {
   //  pnuematicOne.set_value(extend); //not sure if this works
     pneumaticTwo.set_value(extend);
-    pnuematicOne.set_value(extend);
+    pneumaticOne.set_value(extend); //pneumatic
 }
 
-void setMogoSolenoids(bool extend) {
+void setMogoSolenoids() {
     
     bool extendPiston = false;
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {

@@ -10,7 +10,7 @@ void setIntake(int power) { //intake power (I need to figure out how to reverse 
 }
 
 //driver controller functions
-void setIntakeMotors(int power) {
+void setIntakeMotors() {
     //bottom trigger intakes and top trigger outtakes
     //link belt to the same thigies
 
