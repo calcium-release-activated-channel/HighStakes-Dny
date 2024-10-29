@@ -13,9 +13,8 @@ void setIntake(int power) { //intake power (I need to figure out how to reverse 
 void setIntakeMotors() {
     //bottom trigger intakes and top trigger outtakes
     //link belt to the same thigies
-
-    int intakePower = 127*(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1) -
-     controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2));  
+    
+    int intakePower = 127*((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) );  
      //maybe fix l1/l2 later..
      //also this code acts like 127* ( 1 - 0) = 127 OR 127*(0-1) = -127 (max speds)
     setIntake(intakePower);

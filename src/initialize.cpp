@@ -25,6 +25,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+    
     pros::lcd::initialize();
     pros::lcd::set_text(0, "Nanesh wuz here :3");
 
