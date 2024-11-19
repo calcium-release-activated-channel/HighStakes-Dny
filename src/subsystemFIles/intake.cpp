@@ -14,15 +14,21 @@ void setIntakeMotors() {
     //bottom trigger intakes and top trigger outtakes
     //link belt to the same thigies
     
-    int intakePower = 127*((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) );  
+    int intakePower = 11000*((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) );  
      //maybe fix l1/l2 later..
      //also this code acts like 127* ( 1 - 0) = 127 OR 127*(0-1) = -127 (max speds)
+    
+    
+    // Clamp intakePower to the range of -12000 to 12000
+   // intakePower = std::max(-12000, std::min(12000, intakePower));
+
+
     setIntake(intakePower);
     /*
     if(controller.get.digital(pros::E_CONTROLLER_DIGITAL_L2)) 
-        intakePower = -127; //negative max sped
+        intakePower = 11000; //negative max sped
     else if (controller.get.digital(pros::E_CONTROLLER_DIGITAL_L1)) 
-        intakePower = 127; //positive max sped
+        intakePower = 11000; //positive max sped
     setIntake(intakePower);
 
     INEFFICIENT CODE

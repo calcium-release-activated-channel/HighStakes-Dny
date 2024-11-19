@@ -10,7 +10,7 @@ Also I need to learn pnuematics...
 
 */
 
-pros::Motor intake(-10, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); 
+pros::Motor intake(-8, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); 
 //(+- Port , Gearset (rpm), encoder units (a.k.a counting stuff))
 // intake.set_reversed(true);
 
@@ -18,25 +18,25 @@ pros::Motor belt(5, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 
 
 //left drive
-pros::Motor driveLeftFront(-20, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
+pros::Motor driveLeftFront(-18, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 pros::Motor driveLeftBack(-19, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 pros::Motor driveLeftBackTop(9, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 
 //right drive
 pros::Motor driveRightFront(11, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
-pros::Motor driveRightBack(12, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); //,BEFORE  pros::E_MOTOR_ENCODER_COUNTS
+pros::Motor driveRightBack(14, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); //,BEFORE  pros::E_MOTOR_ENCODER_COUNTS
 pros::Motor driveRightBackTop(-13, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 
 //controller
-pros::Controller controller(pros::E_CONTROLLER_MASTER);
+pros::Controller controller(pros::E_CONTROLLER_MASTER); 
 
 //pnuematics
 //NEED TO CHECK LATER I HAVE NO CLUE!!!
 // pros::ADIDigitalOut pnuematicOne('A'); //A is like the port it should be plugged into...? idk
 // pros::ADIDigitalOut pnuematicTwo('B');                              //B is like the port thing it should be plugged into? idk adding anoteher motor
 
-pros::adi::DigitalOut pneumaticOne('A');
-pros::adi::DigitalOut pneumaticTwo('B');
+pros::adi::DigitalOut pneumaticOne('F');
+pros::adi::DigitalOut pneumaticTwo('F');
  
 
 

@@ -96,8 +96,8 @@ void translate(int units, int voltage) {
     }
 
     //brief brake
-    setDrive(-10 * direction,-10 * direction); //may change multiplier depending on units
-    pros::delay(50); // (this can vary depending on heavy our bot is..)
+    setDrive(-0.5 * direction,-0.5 * direction); //may change multiplier depending on units
+    pros::delay(20); // (this can vary depending on heavy our bot is..)
     //set drive back to nuetral
     setDrive(0,0);
 

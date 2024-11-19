@@ -31,9 +31,11 @@ void initialize() {
 
     // MOTOR STUFF
     driveLeftBack.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);  // motor do whatever (keep movingg), hold- keep it, brake- like hold but won't counteract motion
+    driveLeftBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     driveLeftFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     driveRightBack.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    driveRightBack.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    driveRightFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    driveRightBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
     intake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);  // MAY CHANGE
 
@@ -84,9 +86,53 @@ void competition_initialize() {}
 
 // void autonomous() {}    GETTING RID OF AUTONTOMIUOS HERE
 
+//testing VV
 void redLeftCorner() {
-    translate(-500,100); //this is basically simple drive back/front and at the speed
-    //rotate
+   //translate (distance, voltage) straight line
+   //rotate (degrees, voltage) 
+    
+    translate(500,100);
+    rotate(90, 40);
+
+    translate(-500,100);
+    rotate(-90,40);
+
+
+taskKill();
+}
+
+void redFar() {
+    
+    taskKill();
+}
+
+void redClose() {
+    //first line
+    translate(1500, 40);
+
+    //to goal
+    rotate(60, 20);
+    translate(500,20);
+    setMogo(true);
+
+    //scoring pre load
+    setIntake(100);
+
+    //going for donut stack
+
+
+
+    taskKill();
+}
+
+void blueFar() {
+    
+    taskKill();
+}
+
+void blueClose() {
+    
+    taskKill();
 }
 
 /*
@@ -96,7 +142,7 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-    //redLeftCorner();
+    redLeftCorner();
 
 }
 
@@ -114,22 +160,26 @@ void autonomous () {
  * task, not resume it from where it left off.
  */
 
+void taskKill() {
+    //put stuff here that resets everything?
+    setDrive(0,0);
+    setIntake(0);
+    setMogo(false);
+}
 
 void opcontrol() {
-   
+   taskKill(); //run once at the start
+
     while (true) {
         
         //some code to control drive-
         setDriveMotors();
 
     //some code to control intake/belt-
-        setIntakeMotors();  //NEED TO COPY DRIVE WHERE IT"S BLANK
+        setIntakeMotors();  
 
-    //some code to control mogo
-    //NEED TO CHECK OVER MY CODE HERE
-    // HOW DO YOU DO PNUEMATICS!!!
-         //WHHOOPS need to make toggle.. 
-        setMogoSolenoids(); //NEED TO COPY DRIVE WHERE IT"S BLANK
+        //controlling mogo
+        setMogoSolenoids(); 
 
         
         pros::delay(20);                               // Run for 20 ms then update
