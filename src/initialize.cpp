@@ -102,7 +102,22 @@ taskKill();
 }
 
 void redFar() {
-    
+    //going to mogo and intaking preload
+    translate(-1600,100);
+    setMogo(true);
+    pros::delay(100);
+    setIntake(11000);
+
+    //going to stack and intaking preload
+    rotate(90,40); //turning to donuts near midline
+    translate(900,100); //going to midline donuts
+    rotate(-10,40); // adjust to line up with donuts
+    translate(350,100); //pickup donuts
+    rotate(10,40); //prepare to reverse
+    translate(-500,100); //reverse
+    rotate(-90,40); // turn to line up with last donut
+    translate(600,100); // picking up last donut
+
     taskKill();
 }
 
@@ -111,13 +126,15 @@ void redClose() {
     translate(1500, 40);
 
     //to goal
+
+    /*
     rotate(60, 20);
     translate(500,20);
     setMogo(true);
 
     //scoring pre load
     setIntake(100);
-
+    */
     //going for donut stack
 
 
@@ -142,7 +159,7 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-    redLeftCorner();
+    redClose();
 
 }
 
