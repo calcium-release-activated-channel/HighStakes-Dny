@@ -69,6 +69,18 @@ void disabled() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
+
+//auton selector here or aboce comp initalize
+const std::vector<std::string> autonModes = {
+    "* Default    ",
+    "* (R) redFar",
+    "* RedClose   ",
+    "* BlueFar    ",
+    "* BlueClose  "};
+int autMode = 0;
+uint8_t autonSelectorPort = 'B';
+pros::adi::DigitalIn autonSelector(autonSelectorPort);
+
 void competition_initialize() {
      pros::delay(100);
     controller.set_text(0,0, autonModes[autMode]);
@@ -99,15 +111,7 @@ void competition_initialize() {
 
 // void autonomous() {}    GETTING RID OF AUTONTOMIUOS HERE
 //auton selector 
-const std::vector<std::string> autonModes = {
-    "* Default    ",
-    "* (R) redFar",
-    "* RedClose   ",
-    "* BlueFar    ",
-    "* BlueClose  "};
-int autMode = 0;
-uint8_t autonSelectorPort = 'B';
-pros::ADIDigitalIn autonSelector(autonSelectorPort);
+
 
 //testing VV
 void redLeftCorner() {
