@@ -25,6 +25,8 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+    autonChassis.calibrate();
+
     
     pros::lcd::initialize();
     pros::lcd::set_text(0, "Nanesh wuz here :3");
@@ -43,8 +45,10 @@ void initialize() {
 
     
     // gyro/IMU thingy
-    inertial_sensor.reset();          // Reset the inertial sensor
-    pros::delay(2000);
+    
+    
+  //  inertial_sensor.reset();          // Reset the inertial sensor
+   // pros::delay(2000);
 
      // needs 2 seconds to calibrate sensor.
     // gyros help to somewhat like correct urself
@@ -70,13 +74,30 @@ void disabled() {
  * starts.
  */
 
+//lemLib
+// motor groups
+pros::MotorGroup driveL({-18, -19, 9}, pros::MotorGears::blue);
+pros::MotorGroup driveR({11,15,-13}, pros::MotorGears::blue);
+
+// PID
+lemlib::Drivetrain autonDrive{&driveL, &driveR, 9.5, lemlib::Omniwheel::NEW_325, 4, 300};
+lemlib::ControllerSettings linearController{10, 0, 3, 3, 1, 100, 3, 500, 20};
+lemlib::ControllerSettings angularController{2, 0, 10, 3, 1, 100, 3, 500, 0};
+lemlib::OdomSensors sensors{nullptr, nullptr, nullptr, nullptr, &inertial_sensor};
+lemlib::Chassis autonChassis(autonDrive, linearController, angularController, sensors);
+
 //auton selector here or aboce comp initalize
+/* Key:
+ * "*" == Working
+ * "-" == Programmed but untested
+ * " " == Not programmed
+ */
 const std::vector<std::string> autonModes = {
-    "* Default    ",
-    "* (R) redFar",
-    "* RedClose   ",
-    "* BlueFar    ",
-    "* BlueClose  "};
+    " Default    ",
+    " RedFar     ",
+    " RedClose   ",
+    " BlueFar    ",
+    " BlueClose  "};
 int autMode = 0;
 uint8_t autonSelectorPort = 'B';
 pros::adi::DigitalIn autonSelector(autonSelectorPort);
@@ -127,8 +148,31 @@ void redLeftCorner() {
 
 
 }
-
 void redFar() {
+    setMogo(false);
+    autonChassis.setPose(-57.524, 44.169, 180); //initally backwarsd
+    //going to mogo and intaking preload
+    autonChassis.moveToPoint(-17.539, 20.818, 2000);
+    setMogo(true);
+    pros::delay(200);
+    setIntake(10000);
+    pros::delay(600); 
+    //going "forwards"
+     autonChassis.moveToPoint(-20.738, 22.097, 2000);
+    //turning
+    autonChassis.turnToPoint(-11.141, 35.532, 2000);
+    autonChassis.moveToPoint(-11.141, 35.532, 2000);
+    //may implement back and forth to get stuff..
+    autonChassis.turnToPoint(-8.902, 59.843, 2000);
+    autonChassis.moveToPoint(-8.902, 59.843, 2000);
+
+
+
+
+    setIntake(0);
+    setMogo(false); //remove later TESTING
+}
+void redFarOld() {
     setMogo(false);
     //going to mogo and intaking preload
     translate(-1550,100);
@@ -161,7 +205,8 @@ void redFar() {
     rotate(75,40); // turn to line up with last donut
     translate(600,100); // picking up last donut
 
-    
+    setIntake(0);
+    setMogo(false); //remove later
 }
 
 void redClose() {
