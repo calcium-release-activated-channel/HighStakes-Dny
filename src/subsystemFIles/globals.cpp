@@ -24,7 +24,7 @@ pros::Motor driveLeftBackTop(9, pros::v5::MotorGears::blue, pros::v5::MotorUnits
 
 //right drive
 pros::Motor driveRightFront(11, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
-pros::Motor driveRightBack(14, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); //,BEFORE  pros::E_MOTOR_ENCODER_COUNTS
+pros::Motor driveRightBack(15, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); //,BEFORE  pros::E_MOTOR_ENCODER_COUNTS
 pros::Motor driveRightBackTop(-13, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 
 //controller
@@ -45,4 +45,4 @@ pros::adi::DigitalOut pneumaticTwo('F');
 // pros::Imu imuObj(imuPort);   IMU FOR AUTON
 //MAY LATER IMPLEMENT TRACKING WHEELS
 
-pros::IMU inertial_sensor(15); //change port later
+pros::IMU inertial_sensor(17); //change port later

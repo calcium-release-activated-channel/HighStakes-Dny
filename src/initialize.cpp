@@ -98,27 +98,43 @@ void redLeftCorner() {
     rotate(-90,40);
 
 
-taskKill();
+
 }
 
 void redFar() {
+    setMogo(false);
     //going to mogo and intaking preload
-    translate(-1600,100);
+    translate(-1550,100);
     setMogo(true);
-    pros::delay(100);
-    setIntake(11000);
+    pros::delay(200);
+    setIntake(10000);
+
+    pros::delay(600);
 
     //going to stack and intaking preload
-    rotate(90,40); //turning to donuts near midline
-    translate(900,100); //going to midline donuts
-    rotate(-10,40); // adjust to line up with donuts
-    translate(350,100); //pickup donuts
-    rotate(10,40); //prepare to reverse
-    translate(-500,100); //reverse
-    rotate(-90,40); // turn to line up with last donut
+    translate(300,100);
+    rotate(-90,40); //turning to donuts near midline
+    translate(950,100); //going to midline donuts
+    pros::delay(200);
+    rotate(20,40); // adjust to line up with donuts
+    translate(300,100); //pickup donuts
+    pros::delay(200);
+    translate(-250,100);
+    pros::delay(200);
+    rotate(5,40);
+    translate(350,100);
+    pros::delay(200);
+    translate(-250,100);
+    pros::delay(200);
+    translate(200,100); //midlinedonut pickup end
+    pros::delay(200);
+    rotate(-25,40); //prepare to reverse
+    translate(-425,100); //reverse
+    pros::delay(200);
+    rotate(75,40); // turn to line up with last donut
     translate(600,100); // picking up last donut
 
-    taskKill();
+    
 }
 
 void redClose() {
@@ -139,17 +155,17 @@ void redClose() {
 
 
 
-    taskKill();
+    
 }
 
 void blueFar() {
     
-    taskKill();
+    
 }
 
 void blueClose() {
     
-    taskKill();
+    
 }
 
 /*
@@ -159,7 +175,7 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-    redClose();
+    redFar();
 
 }
 
@@ -177,17 +193,12 @@ void autonomous () {
  * task, not resume it from where it left off.
  */
 
-void taskKill() {
-    //put stuff here that resets everything?
-    setDrive(0,0);
-    setIntake(0);
-    setMogo(false);
-}
+
 
 void opcontrol() {
-   taskKill(); //run once at the start
+    //run once at the start
 
-    while (true) {
+    while (true) {\
         
         //some code to control drive-
         setDriveMotors();
