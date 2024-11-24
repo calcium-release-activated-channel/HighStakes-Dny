@@ -8,7 +8,7 @@ void setMogo(bool extend) {
 }
 
 void setMogoSolenoids() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
         extendPiston = !extendPiston; // Toggle the state
         setMogo(extendPiston); // Apply the toggled state to pneumatics
         pros::delay(300); // Delay to prevent multiple toggles from a single press

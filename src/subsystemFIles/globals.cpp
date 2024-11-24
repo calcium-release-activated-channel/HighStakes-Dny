@@ -10,7 +10,7 @@ Also I need to learn pnuematics...
 
 */
 
-pros::Motor intake(-8, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); 
+pros::Motor intake(-20, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); 
 //(+- Port , Gearset (rpm), encoder units (a.k.a counting stuff))
 // intake.set_reversed(true);
 
@@ -35,10 +35,11 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 // pros::ADIDigitalOut pnuematicOne('A'); //A is like the port it should be plugged into...? idk
 // pros::ADIDigitalOut pnuematicTwo('B');                              //B is like the port thing it should be plugged into? idk adding anoteher motor
 
-pros::adi::DigitalOut pneumaticOne('F');
-pros::adi::DigitalOut pneumaticTwo('F');
+pros::adi::DigitalOut pneumaticOne('A');
+pros::adi::DigitalOut pneumaticTwo('A');
  
-
+//auton selector button?
+//pros::adi::DigitalOut button('F');
 
 //sensors 
 // pros::ADIDigitalIn autonSelector(autonSelectorPort); AUTON SELECTOR

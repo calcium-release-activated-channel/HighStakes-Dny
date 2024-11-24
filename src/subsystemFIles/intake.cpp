@@ -14,7 +14,7 @@ void setIntakeMotors() {
     //bottom trigger intakes and top trigger outtakes
     //link belt to the same thigies
     
-    int intakePower = 11000*((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) );  
+    int intakePower = 11000*((controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) );  
      //maybe fix l1/l2 later..
      //also this code acts like 127* ( 1 - 0) = 127 OR 127*(0-1) = -127 (max speds)
     

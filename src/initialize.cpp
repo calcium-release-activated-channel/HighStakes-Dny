@@ -69,7 +69,20 @@ void disabled() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+     pros::delay(100);
+    controller.set_text(0,0, autonModes[autMode]);
+    while (true) {
+        if (autonSelector.get_new_press()) {
+            controller.rumble(".");
+            autMode = autMode < (int)autonModes.size() - 1 ? autMode + 1 : 0;
+            controller.clear_line(0);
+            pros::delay(50);
+            controller.set_text(0, 0, autonModes[autMode]);
+        }
+        pros::delay(20);
+    }
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -85,6 +98,16 @@ void competition_initialize() {}
 
 
 // void autonomous() {}    GETTING RID OF AUTONTOMIUOS HERE
+//auton selector 
+const std::vector<std::string> autonModes = {
+    "* Default    ",
+    "* (R) redFar",
+    "* RedClose   ",
+    "* BlueFar    ",
+    "* BlueClose  "};
+int autMode = 0;
+uint8_t autonSelectorPort = 'B';
+pros::ADIDigitalIn autonSelector(autonSelectorPort);
 
 //testing VV
 void redLeftCorner() {
@@ -168,6 +191,10 @@ void blueClose() {
     
 }
 
+void noAuton() {
+    //nothing
+}
+
 /*
 void blueLeftCorner() {
 
@@ -175,7 +202,25 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-    redFar();
+   // redFar();
+
+   switch (autMode) {
+        case 0:
+            redFar();
+            break;
+        case 1:
+            redClose();
+            break;
+        case 2:
+            blueFar();
+            break;
+        case 3:
+            blueClose();
+            break;
+        default:
+            noAuton();
+            break;
+    }
 
 }
 
