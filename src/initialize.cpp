@@ -261,44 +261,40 @@ void redFarOld() {
 void redFarBKUP() {
     setMogo(false);
     //going to mogo and intaking preload
-    translate(-1550,100);
+    translate(-1540,100);
     pros::delay(200);
     setMogo(true);
     pros::delay(400);
     setIntake(10000);
     pros::delay(600);
-    translate(490,70);
-    rotate(-55,40);
+    translate(497,70); // go to initial mogo pos.
+    rotate(-54,40);
     pros::delay(300);
-    translate2(585,60);
+    translate2(525,85); // go to solo stack  --- lower this distance to avoid picking up enemy donut
     pros::delay(1000);
     translate2(-50,100);
     pros::delay(100);
     translate2(50,100);
     pros::delay(100);
-    translate2(-50,100);
+    translate2(-30,100);
     pros::delay(100);
-    translate2(50,100);
+    translate2(30,100);
     pros::delay(300);
-    rotate(-93,40); //mid turn
+    rotate(-97,40); //mid turn
     pros::delay(300);
-    translate2(560,40);
+    translate2(350,50);
     pros::delay(300);
-    translate2(-200,60);
+    translate2(-180,60);
     pros::delay(200);
-    translate(55,127);
+    translate(85,127);
     pros::delay(300);
-    translate(-350,100); //reversing 4 ladder
-    pros::delay(400);
-    rotate(-90,40);
-    pros::delay(400);
-    rotate(-90,40);
+    translate(-335,100); //reversing 4 ladder
     pros::delay(400);
     rotate(-40,40);
     pros::delay(200);
-    translate(620,100); //move toward ladder
+    translate(520,100); //move toward ladder
 }
-void redFarBKUP2() {
+/*void redFarBKUP2() {
     setMogo(false);
     //going to mogo and intaking preload
     translate(-1550,100);
@@ -337,7 +333,7 @@ void redFarBKUP2() {
     rotate(-40,40);
     pros::delay(200);
     translate(620,100); //move toward ladder
-}
+} */
 void redClose() {
     //first line
     translate(1500, 40);
@@ -360,7 +356,40 @@ void redClose() {
 }
 
 void blueFar() {
-    
+    setMogo(false);
+    //going to mogo and intaking preload
+    translate(-1540,100);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(400);
+    setIntake(10000);
+    pros::delay(600);
+    translate(497,70); // go to initial mogo pos.
+    rotate(54,40);
+    pros::delay(300);
+    translate2(525,85); // go to solo stack
+    pros::delay(1000);
+    translate2(-50,100);
+    pros::delay(100);
+    translate2(50,100);
+    pros::delay(100);
+    translate2(-30,100);
+    pros::delay(100);
+    translate2(30,100);
+    pros::delay(300);
+    rotate(97,40); //mid turn
+    pros::delay(300);
+    translate2(350,50);
+    pros::delay(300);
+    translate2(-180,60);
+    pros::delay(200);
+    translate(85,127);
+    pros::delay(300);
+    translate(-335,100); //reversing 4 ladder
+    pros::delay(400);
+    rotate(40,40);
+    pros::delay(200);
+    translate(520,100);
     
 }
 
@@ -380,7 +409,7 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-    redFarBKUP2();
+    redFarBKUP();
 /*
    switch (autMode) {
         case 0:
