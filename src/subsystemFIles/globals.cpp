@@ -23,7 +23,7 @@ pros::Motor driveLeftBack(-19, pros::v5::MotorGears::blue, pros::v5::MotorUnits:
 pros::Motor driveLeftBackTop(9, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 
 //right drive
-pros::Motor driveRightFront(11, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
+pros::Motor driveRightFront(14, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 pros::Motor driveRightBack(15, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); //,BEFORE  pros::E_MOTOR_ENCODER_COUNTS
 pros::Motor driveRightBackTop(-13, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts);
 
