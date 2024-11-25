@@ -61,6 +61,7 @@ void setDriveMotors();
 
 //autonomous sections
 void translate(int units, int voltage); //coordinate plane system
+void translate2(int units, int voltage);
 void rotate(int degrees, int voltage);
 
 

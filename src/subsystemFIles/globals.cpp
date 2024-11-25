@@ -10,7 +10,7 @@ Also I need to learn pnuematics...
 
 */
 
-pros::Motor intake(-20, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); 
+pros::Motor intake(-16, pros::v5::MotorGears::blue, pros::v5::MotorUnits::counts); 
 //(+- Port , Gearset (rpm), encoder units (a.k.a counting stuff))
 // intake.set_reversed(true);
 

@@ -94,7 +94,7 @@ void translate(int units, int voltage) {
         pros::delay(10);
         */
     }
-
+    
     //brief brake
     setDrive(-0.5 * direction,-0.5 * direction); //may change multiplier depending on units
     pros::delay(20); // (this can vary depending on heavy our bot is..)
@@ -103,6 +103,35 @@ void translate(int units, int voltage) {
 
 } //end of translate
 //
+void translate2(int units, int voltage) {
+    //defines a direction depending on units provided
+    int direction = abs(units) / units; //either -1 or 1
+    
+    //reset motor encoder- reset to 0 and then go more
+    resetDriveEncoders();
+    inertial_sensor.tare_yaw();
+   // inertial_sensor.reset();
+
+    //drive forward until units are reached
+    while(averageDriveEncoderValue() < abs(units)) {  //may review
+        int correction = inertial_sensor.get_yaw() * 0.5; // Scale down correction factor
+        setDrive(voltage * direction, voltage * direction);
+        pros::delay(10);  // Small delay to avoid overloading CPU
+        /*
+        setDrive(voltage * direction + inertial_sensor.get_yaw(), voltage * direction - inertial_sensor.get_yaw()); //before was gyro.get_value()
+        //using gyro to like adjust in case we hit something.... I could possibly divide if overcorrecting..
+        //furthermore imu gyro values may be outputted ifferent...
+        pros::delay(10);
+        */
+    }
+    
+    //brief brake
+    setDrive(-0.5 * direction,-0.5 * direction); //may change multiplier depending on units
+    pros::delay(20); // (this can vary depending on heavy our bot is..)
+    //set drive back to nuetral
+    setDrive(0,0);
+
+} //end of translate2
 
 void rotate(int degrees, int voltage) {
     //define direction, based on units provided (either +  or -)
