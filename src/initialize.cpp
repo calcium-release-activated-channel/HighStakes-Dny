@@ -270,7 +270,7 @@ void redFarBKUP() {
     translate(497,70); // go to initial mogo pos.
     rotate(-54,40);
     pros::delay(300);
-    translate2(525,85); // go to solo stack  --- lower this distance to avoid picking up enemy donut
+    translate2(525,85); // go to solo stack  --- lower this distance to avoid picking up enemy donut, maybe add speed
     pros::delay(1000);
     translate2(-50,100);
     pros::delay(100);
@@ -335,21 +335,35 @@ void redFarBKUP() {
     translate(620,100); //move toward ladder
 } */
 void redClose() {
-    //first line
-    translate(1500, 40);
-
-    //to goal
-
-    /*
-    rotate(60, 20);
-    translate(500,20);
+    //get mogo
+    translate(-700, 40); //may be too far
+    pros::delay(300);
     setMogo(true);
+    pros::delay(200);
+    //intaking preload after turning
+    rotate(-90,40);
+    pros::delay(200);
+    setIntake(11000);
+    //dropping mogo 
+    pros::delay(200);
+    setMogo(false);
+    //knocking off top ring and PARTIALLY getting the ring intakes
+    translate(520,90);
+    pros::delay(1200);
+    setIntake(0);
+    //turning to mid mogo
+    pros::delay(200);
+    rotate(-90,40);
+    pros::delay(200);
+    translate(-200,60); //adjust depending on crossing or NOT toucing mogo
+    //clamping and scoring
+    setMogo(true);
+    pros::delay(200);
+    translate(250,80); //getting away from mid linew
+    pros::delay(200);
+    setIntake(11000); //scoring
 
-    //scoring pre load
-    setIntake(100);
-    */
-    //going for donut stack
-
+    //MAY ADD GOING TO LADDER...
 
 
     
