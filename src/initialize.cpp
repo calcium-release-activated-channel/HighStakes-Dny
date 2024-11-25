@@ -44,9 +44,9 @@ void initialize() {
     pros::lcd::initialize();
     pros::lcd::set_text(0, "Nanesh wuz here :3");
 
-    // MOTOR STUFF
+    // MOTOR STUFF    
     driveLeftBack.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);  // motor do whatever (keep movingg), hold- keep it, brake- like hold but won't counteract motion
-    driveLeftBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    driveLeftBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);  //ORIGINALLY ALL WERE COAST, MAY CHANGE BACK BECAUSE AUTON...
     driveLeftFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     driveRightBack.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     driveRightFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -423,11 +423,13 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-    redFarBKUP();
+   redClose();
+ //  redFarBKUP();
+   // blueFar();
 /*
    switch (autMode) {
         case 0:
-            redFar();
+            redFarBKUP();
             break;
         case 1:
             redClose();
@@ -463,6 +465,13 @@ void autonomous () {
 
 void opcontrol() {
     //run once at the start
+    //setting to brake so joseph liek
+    driveLeftBack.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);  // motor do whatever (keep movingg), hold- keep it, brake- like hold but won't counteract motion
+    driveLeftBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);  //ORIGINALLY ALL WERE COAST, MAY CHANGE BACK BECAUSE AUTON... WHOOPS
+    driveLeftFront.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    driveRightBack.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    driveRightFront.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    driveRightBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     while (true) {
         
