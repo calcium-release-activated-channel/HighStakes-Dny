@@ -369,36 +369,77 @@ void redClose() {
     
 }
 
+void redCloseNEW() {
+    //get mogo
+    translate(-500, 100); //may be too far
+    pros::delay(300);
+    rotate(-90,40);
+    pros::delay(200);
+    translate(-100,30);
+    pros::delay(400);
+    setIntake(11000);
+    pros::delay(200);
+    setIntake(0);
+    pros::delay(100);
+    translate(500,90);
+    pros::delay(100);
+    rotate(-135,40);
+    pros::delay(100);
+    translate(520,50);
+    pros::delay(300);
+    setMogo(true);
+    pros::delay(200);
+    rotate(-135,40);
+    pros::delay(200);
+    setIntake(11000);
+    pros::delay(100);
+    translate(440,90);
+    pros::delay(900);
+    setIntake(0);
+    pros::delay(100);
+    translate(-200,80);
+    pros::delay(250);
+    setIntake(11000);
+    pros::delay(700);
+    rotate(180,40);
+    pros::delay(150);
+    setMogo(false);
+    pros::delay(100);
+    translate(600,100);
+    
+}
+
 void blueFar() {
     setMogo(false);
     //going to mogo and intaking preload
     translate(-1540,100);
     pros::delay(200);
     setMogo(true);
-    pros::delay(400);
+    pros::delay(500);
+    translate(350,70); // go to initial mogo pos.
+    pros::delay(450);
     setIntake(10000);
     pros::delay(600);
-    translate(497,70); // go to initial mogo pos.
     rotate(54,40);
+    pros::delay(200);
+    translate2(400,85); // go to solo stack
+    pros::delay(1050);
+    translate2(-20,110);
+    pros::delay(150);
+    translate2(22,110);
+    pros::delay(150);
+    translate2(-12,100);
+    pros::delay(150);
+    translate2(10,100);
     pros::delay(300);
-    translate2(525,85); // go to solo stack
-    pros::delay(1000);
-    translate2(-50,100);
-    pros::delay(100);
-    translate2(50,100);
-    pros::delay(100);
-    translate2(-30,100);
-    pros::delay(100);
-    translate2(30,100);
-    pros::delay(300);
-    rotate(97,40); //mid turn
-    pros::delay(300);
+    rotate(80,40); //mid turn
+    pros::delay(250);
     translate2(350,50);
-    pros::delay(300);
+    pros::delay(250);
     translate2(-180,60);
     pros::delay(200);
     translate(85,127);
-    pros::delay(300);
+    pros::delay(350);
     translate(-335,100); //reversing 4 ladder
     pros::delay(400);
     rotate(40,40);
@@ -423,9 +464,9 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-   redClose();
+//redFarBKUP();
  //  redFarBKUP();
-   // blueFar();
+    blueFar();
 /*
    switch (autMode) {
         case 0:
@@ -466,12 +507,14 @@ void autonomous () {
 void opcontrol() {
     //run once at the start
     //setting to brake so joseph liek
+    /*
     driveLeftBack.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);  // motor do whatever (keep movingg), hold- keep it, brake- like hold but won't counteract motion
     driveLeftBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);  //ORIGINALLY ALL WERE COAST, MAY CHANGE BACK BECAUSE AUTON... WHOOPS
     driveLeftFront.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     driveRightBack.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     driveRightFront.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     driveRightBackTop.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    */
 
     while (true) {
         
