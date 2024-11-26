@@ -341,6 +341,63 @@ void redFar2()  {
     translate(540,100);
     
 }
+
+void redFar2Elim()  {
+ setMogo(false);
+//if any changes made to redFar2(), most likely change this one...
+ 
+    //going to mogo and intaking preload
+    translate(-1540,80); //REMINDER 11/26 slowed velocity 100 ---> 80
+    //SWITCH BACK IF MO GO ISN'T CLAMPNIG ^
+    //ALSO POSSIBLY SWITCH TO TRANSLATE2 (no correcting--> this may mess up clamp more for making path better)
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(500);
+    translate(300,60);
+
+    // go to initial mogo pos. and intake 
+    pros::delay(450);
+    setIntake(10000);
+    pros::delay(600);
+
+    //rotating to solo stack
+    rotate(-60,40);
+    pros::delay(200);
+    translate2(240,85); // go to solo stack
+    pros::delay(1050);
+    translate2(-20,110);
+    pros::delay(150);
+    translate2(22,110); //change?
+    pros::delay(150);
+    translate2(-12,100);
+    pros::delay(150);
+    translate2(10,100);
+    pros::delay(330);
+
+    //turning to mid stack
+    rotate(-73,40); //mid turn
+    pros::delay(250);
+    translate2(350,50); //could be too much, change if getting blue rings
+    pros::delay(250);
+    translate2(-180,60);    
+    pros::delay(200);
+    translate(80,127); //changed 80 ---> 85 //may change if cross + 
+    pros::delay(350);
+    
+    //going backwards and then to stack other side of stack
+    translate(-250,100); //reversing back
+    pros::delay(250);
+    rotate(20, 83);//turning to the other side of the stack
+    pros::delay(250);
+    translate2(350,50); //initial
+    pros::delay(250);
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(83,127); //change 85 to 80
+    pros::delay(350);
+    
+}
+
 void redClose() {
     //get mogo
     translate(-700, 40); //may be too far
@@ -564,6 +621,7 @@ void blueLeftCorner() {
 
 void autonomous () {
  //   redFarBKUP();
+// redFar2Elim();
  redFar2(); //EXACT opposite of blueFAR
  //blueFarElim();   //for elims tries to go for 4 rings
  //   blueFar(); //well tuned
