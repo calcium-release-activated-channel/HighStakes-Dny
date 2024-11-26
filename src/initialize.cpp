@@ -295,46 +295,52 @@ void redFarBKUP() {
     pros::delay(200);
     translate(520,100); //move toward ladder
 }
-/*void redFarBKUP2() {
-    setMogo(false);
+void redFar2()  {
+ setMogo(false);
     //going to mogo and intaking preload
-    translate(-1550,100);
+    translate(-1540,80); //REMINDER 11/26 slowed velocity 100 ---> 80
+    //SWITCH BACK IF MOGO ISN'T CLAMPNIG ^
+    //ALSO POSSIBLY SWITCH TO TRANSLATE2 (no correcting, however this may mess up clamp more for making path better)
     pros::delay(200);
     setMogo(true);
-    pros::delay(400);
+    pros::delay(500);
+    translate(300,60);
+
+    // go to initial mogo pos. and intake 
+    pros::delay(450);
     setIntake(10000);
     pros::delay(600);
-    translate(490,70);
-    rotate(-55,40);
-    pros::delay(300);
-    translate(585,60);
-    pros::delay(1000);
-    translate(-50,100);
-    pros::delay(100);
-    translate(50,100);
-    pros::delay(100);
-    translate(-50,100);
-    pros::delay(100);
-    translate(50,100);
-    pros::delay(300);
-    rotate(-93,40); //mid turn
-    pros::delay(300);
-    translate(560,40);
-    pros::delay(300);
-    translate(-200,60);
+
+    //rotating to solo stack
+    rotate(-60,40);
     pros::delay(200);
-    translate(55,127);
-    pros::delay(300);
-    translate(-350,100); //reversing 4 ladder
-    pros::delay(400);
-    rotate(-90,40);
-    pros::delay(400);
-    rotate(-90,40);
+    translate2(240,85); // go to solo stack
+    pros::delay(1050);
+    translate2(-20,110);
+    pros::delay(150);
+    translate2(22,110); //change?
+    pros::delay(150);
+    translate2(-12,100);
+    pros::delay(150);
+    translate2(10,100);
+    pros::delay(330);
+
+    //turning to mid stack
+    rotate(-73,40); //mid turn
+    pros::delay(250);
+    translate2(350,50); //could be too much, change if getting blue rings
+    pros::delay(250);
+    translate2(-180,60);    
+    pros::delay(200);
+    translate(80,127); //changed 80 ---> 85 //may change if cross + 
+    pros::delay(350);
+    translate(-335,100); 
     pros::delay(400);
     rotate(-40,40);
     pros::delay(200);
-    translate(620,100); //move toward ladder
-} */
+    translate(540,100);
+    
+}
 void redClose() {
     //get mogo
     translate(-700, 40); //may be too far
@@ -501,7 +507,8 @@ void blueLeftCorner() {
 void autonomous () {
 //redFarBKUP();
  //   redFarBKUP();
-    blueFar();
+ redFar2(); //EXACT opposite of blueFAR
+ //   blueFar();
  //blueClose(); //wip
 /*
    switch (autMode) {
