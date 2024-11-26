@@ -454,6 +454,61 @@ void blueFar() {
     translate(540,100);
     
 }
+void blueFarElim() {
+    setMogo(false);
+    //going to mogo and intaking preload
+    translate(-1540,100);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(500);
+    translate(300,70); // go to initial mogo pos.
+    pros::delay(450);
+    setIntake(10000);
+    pros::delay(600);
+    rotate(60,40);
+    pros::delay(200);
+    translate2(240,85); // go to solo stack
+    pros::delay(1050);
+    translate2(-20,110);
+    pros::delay(150);
+    translate2(22,110); //change?
+    pros::delay(150);
+    translate2(-12,100);
+    pros::delay(150);
+    translate2(10,100);
+    pros::delay(300);
+
+    //turn to mid donuts
+    rotate(73,40); //mid turn
+    pros::delay(250);
+    translate2(350,50); //initial
+    pros::delay(250);
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(83,127); //change 85 to 80
+    pros::delay(350);
+
+    //possibly do front/back motion again? or too slow
+    /*
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(80,127); //change 85 to 80
+    pros::delay(350);
+    */
+
+    //going backwards and then to stack other side of stack
+    translate(-250,100); //reversing back
+    pros::delay(250);
+    rotate(20, 83);//turning to the other side of the stack
+    pros::delay(250);
+    translate2(350,50); //initial
+    pros::delay(250);
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(83,127); //change 85 to 80
+    pros::delay(350);
+}
+
 
 void blueClose() {
     translate(-500, 100); //may be too far
@@ -494,6 +549,9 @@ void blueClose() {
     
 }
 
+
+
+
 void noAuton() {
     //nothing
 }
@@ -505,11 +563,13 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
-//redFarBKUP();
  //   redFarBKUP();
  redFar2(); //EXACT opposite of blueFAR
- //   blueFar();
- //blueClose(); //wip
+ //blueFarElim();   //for elims tries to go for 4 rings
+ //   blueFar(); //well tuned
+
+
+ //blueClose(); //wip probably never
 /*
    switch (autMode) {
         case 0:
