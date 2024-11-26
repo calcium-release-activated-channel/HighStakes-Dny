@@ -261,17 +261,17 @@ void redFarOld() {
 void redFarBKUP() {
     setMogo(false);
     //going to mogo and intaking preload
-    translate(-1500,100);
+    translate(-1480,100);
     pros::delay(200);
     setMogo(true);
     pros::delay(500);
-    translate(260,70); // go to initial mogo pos.
+    translate(270,70); // go to initial mogo pos.
     pros::delay(450);
     setIntake(10000);
     pros::delay(600);
-    rotate(-75,40);
+    rotate(-70,40);
     pros::delay(200);
-    translate2(320,85); // go to solo stack
+    translate2(190,85); // go to solo stack
     pros::delay(1050);
     translate2(-20,100);
     pros::delay(100);
@@ -281,7 +281,7 @@ void redFarBKUP() {
     pros::delay(100);
     translate2(10,100);
     pros::delay(300);
-    rotate(-80,40); //mid turn
+    rotate(-70,40); //mid turn
     pros::delay(300);
     translate2(350,50);
     pros::delay(300);
@@ -291,7 +291,7 @@ void redFarBKUP() {
     pros::delay(300);
     translate(-335,100); //reversing 4 ladder
     pros::delay(400);
-    rotate(-40,40);
+    rotate(-32,40);
     pros::delay(200);
     translate(520,100); //move toward ladder
 }
@@ -427,7 +427,7 @@ void blueFar() {
     pros::delay(1050);
     translate2(-20,110);
     pros::delay(150);
-    translate2(22,110);
+    translate2(22,110); //change?
     pros::delay(150);
     translate2(-12,100);
     pros::delay(150);
@@ -502,6 +502,7 @@ void autonomous () {
 //redFarBKUP();
  //   redFarBKUP();
     blueFar();
+ //blueClose(); //wip
 /*
    switch (autMode) {
         case 0:
