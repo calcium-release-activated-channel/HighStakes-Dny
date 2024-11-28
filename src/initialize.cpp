@@ -474,18 +474,23 @@ void redCloseNEW() {
 }
 void messUpSunny() {
     setMogo(false);
-    //going to mid mogo
-    translate(-950, 70);
-    pros::delay(200);
-    rotate(45, 80);
-    pros::delay(200);
-    translate(-200, 80);
-    pros::delay(100);
-    setMogo(true);
-    pros::delay(200);
-    translate(300, 100);
-    pros::delay(100);
-    setIntake(11000);
+    //going to single stack
+   intake.move_voltage(10000);
+   translate(600, 90);
+   pros::delay(500);
+   //rotating to mogo
+   rotate(146, 40); //135 too straight
+   pros::delay(200);
+   intake.move_voltage(10000);
+   //going backwards and clamping
+   translate(-593, 60);
+   pros::delay(500);
+   setMogo(true);
+   intake.move_voltage(0);
+   pros::delay(500);
+   translate(100, 100);
+   setIntake(10000);
+
 
 
 
