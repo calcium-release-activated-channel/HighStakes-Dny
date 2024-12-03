@@ -151,6 +151,8 @@ void redLeftCorner() {
 
 }
 void redFar() {
+    //THIS IS BAD DONT USE
+    
     setMogo(false);
     autonChassis.setPose(-57.524, 44.169, 300); //initally backwarsd
     //going to mogo and intaking preload
@@ -495,6 +497,100 @@ void messUpSunny() {
 
 
 }
+void blueFar() {
+    setMogo(false);
+    //going to mogo and intaking preload
+    translate(-1540,100);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(500);
+    translate(300,70); // go to initial mogo pos.
+    pros::delay(450);
+    setIntake(10000);
+    pros::delay(600);
+    rotate(60,40);
+    pros::delay(200);
+    translate2(240,85); // go to solo stack
+    pros::delay(1050);
+    translate2(-20,110);
+    pros::delay(150);
+    translate2(22,110); //change?
+    pros::delay(150);
+    translate2(-12,100);
+    pros::delay(150);
+    translate2(10,100);
+    pros::delay(300);
+    rotate(73,40); //mid turn
+    pros::delay(250);
+    translate2(350,50);
+    pros::delay(250);
+    translate2(-180,60);
+    pros::delay(200);
+    translate(80,127); //change 85 to 80
+    pros::delay(350);
+    translate(-335,100); //reversing 4 ladder
+    pros::delay(400);
+    rotate(40,40);
+    pros::delay(200);
+    translate(540,100);
+    
+}
+
+
+void blueFarElim() {
+    setMogo(false);
+    //going to mogo and intaking preload
+    translate(-1540,100);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(500);
+    translate(300,70); // go to initial mogo pos.
+    pros::delay(450);
+    setIntake(10000);
+    pros::delay(600);
+    rotate(60,40);
+    pros::delay(200);
+    translate2(240,85); // go to solo stack
+    pros::delay(1050);
+    translate2(-20,110);
+    pros::delay(150);
+    translate2(22,110); //change?
+    pros::delay(150);
+    translate2(-12,100);
+    pros::delay(150);
+    translate2(10,100);
+    pros::delay(300);
+
+    //turn to mid donuts
+    rotate(73,40); //mid turn
+    pros::delay(250);
+    translate2(350,50); //initial
+    pros::delay(250);
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(83,127); //change 85 to 80
+    pros::delay(350);
+
+    //possibly do front/back motion again? or too slow
+    /*
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(80,127); //change 85 to 80
+    pros::delay(350);
+    */
+
+    //going backwards and then to stack other side of stack
+    translate(-250,100); //reversing back
+    pros::delay(250);
+    rotate(20, 83);//turning to the other side of the stack
+    pros::delay(250);
+    translate2(350,50); //initial
+    pros::delay(250);
+    translate2(-180,60); //back up
+    pros::delay(200);
+    translate(83,127); //change 85 to 80
+    pros::delay(350);
+}
 
 
 void blueClose() {
@@ -539,6 +635,42 @@ void blueClose() {
     
 }
 
+void blueClose2() {
+    //going for alliance stake
+    translate(-300, 100); //may be too far
+    pros::delay(300);
+    rotate(90,40);
+    pros::delay(200);
+    translate(-60,30);
+    pros::delay(400);
+    setIntake(11000);
+    pros::delay(200);
+
+    //need to go align back with goal, clamp, turn, intake small stack. 
+    pros::delay(100);
+    translate(500,90);
+    pros::delay(800);
+    setIntake(0);
+    rotate(135,40);
+    pros::delay(200);
+    translate(520,50);
+    pros::delay(300);
+    setMogo(true);
+    pros::delay(200);
+    setIntake(11000);
+    pros::delay(400);
+    rotate(-40,40);
+    pros::delay(200);
+    pros::delay(100);
+    translate(440,90);
+    pros::delay(900);
+    setIntake(0);
+    pros::delay(100);
+    translate(-650,80);
+    pros::delay(250);
+    
+}
+
 
 
 
@@ -557,8 +689,9 @@ void autonomous () {
  //redFar2Elim();
  //redFar2(); //EXACT opposite of blueFAR
  //blueFarElim();   //for elims tries to go for 4 rings
- //   blueFar(); //well tuned
-messUpSunny(); //mid rush blue far
+// blueFar(); //well tuned
+//messUpSunny(); //mid rush blue far
+blueClose2();
 
  //blueClose(); //wip probably never
 /*
