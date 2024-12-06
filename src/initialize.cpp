@@ -671,6 +671,46 @@ void blueClose2() {
     
 }
 
+void blueCloseSWP() {
+    translate(-550,100);
+    pros::delay(300);
+    setMogo(true);
+    pros::delay(200);
+    setIntake(11000);
+    pros::delay(1000);
+    rotate(-90,40);
+    pros::delay(400);
+    translate(340,100);
+    pros::delay(600);
+    translate(-50,110);
+    pros::delay(100);
+    translate(50,110);
+    pros::delay(300);
+    rotate(135,40);
+    pros::delay(600);
+    translate(400,100);
+    pros::delay(300);
+    rotate(45,40);
+    pros::delay(300);
+    setMogo(false);
+    pros::delay(400);
+    translate(700,100);
+    pros::delay(500);
+    setIntake(0);
+    pros::delay(100);
+    rotate(-135,40);
+    pros::delay(600);
+    translate(-400,100);
+    pros::delay(300);
+    setMogo(true);
+    pros::delay(200);
+    setIntake(1100);
+    pros::delay(700);
+    rotate(-45,90);
+    pros::delay(200);
+    translate(400,110);
+
+}
 
 
 
@@ -691,7 +731,7 @@ void autonomous () {
  //blueFarElim();   //for elims tries to go for 4 rings
 // blueFar(); //well tuned
 //messUpSunny(); //mid rush blue far
-blueClose2();
+blueCloseSWP();
 
  //blueClose(); //wip probably never
 /*
