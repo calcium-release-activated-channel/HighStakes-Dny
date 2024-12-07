@@ -694,10 +694,10 @@ void blueCloseSWP() {
     pros::delay(300);
     setMogo(false);
     pros::delay(400);
-    translate(800,90);
-    pros::delay(60);
+    translate(850,90);
+    pros::delay(600);
     setIntake(0);
-    pros::delay(100);
+    pros::delay(150);
     rotate(-135,40);
     pros::delay(600);
     translate(-800,100);
