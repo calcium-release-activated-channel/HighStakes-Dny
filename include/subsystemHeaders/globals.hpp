@@ -31,3 +31,5 @@ extern pros::Controller controller;
 //miscellaneous
 //extern pros::ADIGyro gyro;
 extern pros::IMU inertial_sensor;
+
+extern bool arcade; //arcade drive or nah

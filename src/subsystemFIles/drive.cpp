@@ -22,15 +22,27 @@ void setDrive(int left, int right) {
     driveRightBackTop = right;
     */
 
-   //left side
-    driveLeftFront.move(left);      
-    driveLeftBack.move(left);       
-    driveLeftBackTop.move(left);    
+   if (arcade) { // power = left, turn = right
+       int leftPwr = left + right;
+        int rightPwr = left - right;
+        driveLeftBack.move(leftPwr);
+        driveLeftFront.move(leftPwr);
+        driveLeftBackTop.move(leftPwr);
+        driveRightBack.move(rightPwr);
+        driveRightFront.move(rightPwr);
+        driveRightBackTop.move(rightPwr);
+   }
+   else {
+        //left side
+        driveLeftFront.move(left);      
+        driveLeftBack.move(left);       
+        driveLeftBackTop.move(left);    
 
-    //right side
-    driveRightFront.move(right);    
-    driveRightBack.move(right);     
-    driveRightBackTop.move(right);  
+        //right side
+        driveRightFront.move(right);    
+        driveRightBack.move(right);     
+        driveRightBackTop.move(right);  
+    }
 }
 //VVV being used in auton
 void resetDriveEncoders() {
@@ -46,6 +58,8 @@ void setDriveMotors() {
    //analong for joysticks and digital for buttons
    //voltage to set motors is -127 to 127
    //and inputs from joystick is also -127 to 127
+   if (arcade)
+        rightJoyStick = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
    //making a controller deadzone (within this area nothing happens) --> ask driver later for input
    if (abs(leftJoyStick) < 5) {

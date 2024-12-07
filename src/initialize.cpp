@@ -19,6 +19,8 @@ lemlib::ControllerSettings angularController{2, 0, 10, 3, 1, 100, 3, 500, 0};
 lemlib::OdomSensors sensors{nullptr, nullptr, nullptr, nullptr, &inertial_sensor};
 lemlib::Chassis autonChassis(autonDrive, linearController, angularController, sensors);
 
+bool arcade = true;
+
 
 void on_center_button() {
     static bool pressed = false;
@@ -725,13 +727,16 @@ void blueLeftCorner() {
 */
 
 void autonomous () {
+// STABLE
+// blueFar(); //well tuned
+ //redFar2(); //EXACT opposite of blueFAR
+
+// TESTING
  //   redFarBKUP();
  //redFar2Elim();
- //redFar2(); //EXACT opposite of blueFAR
  //blueFarElim();   //for elims tries to go for 4 rings
-// blueFar(); //well tuned
 //messUpSunny(); //mid rush blue far
-blueCloseSWP();
+// blueCloseSWP();
 
  //blueClose(); //wip probably never
 /*
