@@ -9,6 +9,16 @@
 //using those functions
 
 //Helper functions (SO WE DONT GOTTA COPY AND PASTE ALL THE TIME)
+void setDriveArcade(int left, int right) {
+    int leftPwr = left + right;
+    int rightPwr = left - right;
+    driveLeftBack.move(leftPwr);
+    driveLeftFront.move(leftPwr);
+    driveLeftBackTop.move(leftPwr);
+    driveRightBack.move(rightPwr);
+    driveRightFront.move(rightPwr);
+    driveRightBackTop.move(rightPwr);
+}
 void setDrive(int left, int right) {
     /*
     //left side
@@ -22,17 +32,7 @@ void setDrive(int left, int right) {
     driveRightBackTop = right;
     */
 
-   if (arcade) { // power = left, turn = right
-       int leftPwr = left + right;
-        int rightPwr = left - right;
-        driveLeftBack.move(leftPwr);
-        driveLeftFront.move(leftPwr);
-        driveLeftBackTop.move(leftPwr);
-        driveRightBack.move(rightPwr);
-        driveRightFront.move(rightPwr);
-        driveRightBackTop.move(rightPwr);
-   }
-   else {
+
         //left side
         driveLeftFront.move(left);      
         driveLeftBack.move(left);       
@@ -42,7 +42,6 @@ void setDrive(int left, int right) {
         driveRightFront.move(right);    
         driveRightBack.move(right);     
         driveRightBackTop.move(right);  
-    }
 }
 //VVV being used in auton
 void resetDriveEncoders() {
@@ -58,8 +57,6 @@ void setDriveMotors() {
    //analong for joysticks and digital for buttons
    //voltage to set motors is -127 to 127
    //and inputs from joystick is also -127 to 127
-   if (arcade)
-        rightJoyStick = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
    //making a controller deadzone (within this area nothing happens) --> ask driver later for input
    if (abs(leftJoyStick) < 5) {
@@ -78,6 +75,30 @@ void setDriveMotors() {
    /*
     //setDrive(0,0);//left sidedriveLeftFront = 0; driveLeftBack = 0;driveLeftBackTop = 0;//right sidedriveRightFront = 0;driveRightBack = 0;driveRightBackTop = 0;
     */
+}
+
+void setDriveMotorsArcade() {
+    int leftJoyStick = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int rightJoyStick = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    // analong for joysticks and digital for buttons
+    // voltage to set motors is -127 to 127
+    // and inputs from joystick is also -127 to 127
+        
+
+    // making a controller deadzone (within this area nothing happens) --> ask driver later for input
+    if (abs(leftJoyStick) < 5) {
+        leftJoyStick = 0;
+    }
+
+    if (abs(rightJoyStick) < 5) {
+        rightJoyStick = 0;
+    }
+
+    setDriveArcade(leftJoyStick, rightJoyStick);  // defining function
+
+    /*
+     //setDrive(0,0);//left sidedriveLeftFront = 0; driveLeftBack = 0;driveLeftBackTop = 0;//right sidedriveRightFront = 0;driveRightBack = 0;driveRightBackTop = 0;
+     */
 }
 
 //averages everything

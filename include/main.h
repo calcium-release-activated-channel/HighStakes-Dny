@@ -52,12 +52,14 @@ void setMogoSolenoids();  //was before ()
  */
 //HELPER functions
 void setDrive(int left, int right);
+void setDriveArcade(int left, int right);
 
 void resetDriveEncoders();
 double averageDriveEncoderValue();
 //declaring functions
 
 void setDriveMotors();
+void setDriveMotorsArcade();
 
 //autonomous sections
 void translate(int units, int voltage); //coordinate plane system
