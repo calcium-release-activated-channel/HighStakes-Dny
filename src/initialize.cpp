@@ -24,12 +24,10 @@ bool arcade = true;
 void on_center_button() {
     static bool pressed = false;
     pressed = !pressed;
-    if (pressed) {
+    if (pressed)
         pros::lcd::set_text(2, "I was pressed!");
-    }
-    else {
+    else
         pros::lcd::clear_line(2);
-    }
 }
 
 /**
@@ -57,7 +55,6 @@ void initialize() {
     // HOW DO PNUEMATICS?!?!?
 
     // gyro/IMU thingy
-
     inertial_sensor.reset();  // Reset the inertial sensor
     pros::delay(2000);
 
