@@ -37,40 +37,9 @@
 #include "api.h"
 
 /**
- * Function Declarations from intake.hpp
- */
-void setIntake(int power);
-void setIntakeMotors();
-
-/**
- * Function Declarations from mogo.hpp
- */
-void setMogo(bool extend);  // was before int p
-void setMogoSolenoids();    // was before ()
-
-/**
- * Function Declarations from drive.hpp
- * (Add any necessary drive function declarations here)
- */
-// HELPER functions
-void setDrive(int left, int right);
-void setDriveArcade(int left, int right);
-void resetDriveEncoders();
-double averageDriveEncoderValue();
-
-// declaring functions
-void setDriveMotors();
-void setDriveMotorsArcade();
-
-// autonomous sections
-void translate(int units, int voltage);  // coordinate plane system
-void translate2(int units, int voltage);
-void rotate(int degrees, int voltage);
-
-/**
  * You should add more #includes here
  */
-// #include "okapi/api.hpp"
+//#include "okapi/api.hpp"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -97,7 +66,6 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
-void taskKill(void);
 #ifdef __cplusplus
 }
 #endif
@@ -106,19 +74,7 @@ void taskKill(void);
 /**
  * You can add C++-only headers here
  */
-// #include <iostream>
+//#include <iostream>
 #endif
-
-// include all our mechanisms so we have access to them
-// INTEGRATION HELL
-/*
-#include "subsystemHeaders/belt.hpp"
-#include "subsystemHeaders/drive.hpp"
-#include "subsystemHeaders/globals.hpp"
-#include "subsystemHeaders/intake.hpp"
-#include "subsystemHeaders/mogo.hpp"
-*/
-#include "lemlib/api.hpp"  // IWYU pragma: keep
-#include "subsystemHeaders/globals.hpp"
 
 #endif  // _PROS_MAIN_H_
