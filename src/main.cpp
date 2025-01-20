@@ -10,9 +10,9 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
 //CHANGE LATER
-pros::MotorGroup leftMotors({-5, 4, -3},
+pros::MotorGroup leftMotors({-5, -10, 9},
                             pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({6, -9, 7}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
+pros::MotorGroup rightMotors({18, 14, -11}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
 pros::Imu imu(10);
@@ -94,8 +94,8 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 //drive motors defined above
 
 //intake
-pros::Motor intake(12);
-pros::Motor conveyor(13);
+pros::Motor intake(17);
+pros::Motor conveyor(16);
 
 
 //pnuematics (doinker/mogo)
@@ -103,8 +103,8 @@ pros::adi::Pneumatics mogo('A', false);
 pros::adi::Pneumatics doinker('B', false);
 
 //ladyBrown
-pros::Motor ladyBrown1(nullptr_t);
-pros::Motor ladyBrown2(nullptr_t);
+//pros::Motor ladyBrown1(-16); //left
+pros::Motor ladyBrown2(19); //right
 
 
 
@@ -149,7 +149,7 @@ void setDoinker(bool extend) {
 }
 
 void setDoinkerSolenoids() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         extendPiston = !extendPiston;  // Toggle the state
         setMogo(extendPiston);         // Apply the toggled state to pneumatics
         pros::delay(300);              // Delay to prevent multiple toggles from a single press
@@ -196,12 +196,29 @@ void setIntakeMotors() { //call this during opcontrol
    
 }  
 
-void setLadyBrown() {
-    //HOW DO I MAKE  MACRO!?!?!?
+void setLadyPower(int power) {  // intake power   //call this during auton.
     
-
+   // intake.move_voltage(power);
+   // conveyor.move_voltage(power);
+   ladyBrown2.move_voltage(power);
 }
 
+// driver controller functions
+void setLadyBrown() { //call this during opcontrol
+
+    // bottom trigger intakes and top trigger outtakes
+    // link belt to the same thigies
+
+   // int ladyPower = 11000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)));
+    int ladyPower = 11000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)));
+
+    setLadyPower(ladyPower);
+   
+}  
+
+
+
+/*
 void setDoinker() {
  bool pistonToggle = false;
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
@@ -219,7 +236,7 @@ void setDoinker() {
     pros::delay(10);
 
 }
-
+*/
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -228,6 +245,13 @@ void setDoinker() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+    //set motors to coast
+    
+    //MOTOR STUFF
+	
+    leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
 
@@ -276,22 +300,429 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 
+// void blueNegative() {
+//     //going to first mogo 
+// chassis.setPose(58.772, 36.387, 90);
+// chassis.moveToPoint(33.202, 36.387, 1000, {.forwards = false, .maxSpeed = 127}, true);
+// chassis.swingToHeading(0, lemlib::DriveSide::LEFT, 1000, {}, true);
+// chassis.moveToPose(24.108, 27.227,0,1000, {.forwards = false, .maxSpeed = 127}, false);
+// setMogo(true);
+
+// //reset
+// }
+
+void noAuton() {
+//nothing happens
+}
+
+void moveAuton() {
+    leftMotors.move_velocity(600);
+    rightMotors.move_velocity(600);
+    pros::delay(1000);
+     leftMotors.move_velocity(0);
+    rightMotors.move_velocity(0);
+}
+
 void blueNegative() {
-    //going to first mogo 
+
+//going to first mogo 
 chassis.setPose(58.772, 36.387, 90);
 chassis.moveToPoint(33.202, 36.387, 1000, {.forwards = false, .maxSpeed = 127}, true);
 chassis.swingToHeading(0, lemlib::DriveSide::LEFT, 1000, {}, true);
 chassis.moveToPose(24.108, 27.227,0,1000, {.forwards = false, .maxSpeed = 127}, false);
 setMogo(true);
 
-//reset
 
 
+//turning towards middle stack and intaking 1
+chassis.turnToPoint(9.701, 39.037, 1000, {.forwards = true, .maxSpeed = 127}, true);
+setIntake(11000);
+chassis.moveToPoint(9.701, 39.037, 1000, {.forwards = true, .maxSpeed = 127}, true);
 
+//going backwards for single stack
+chassis.moveToPoint(22.07, 32.003, 1000, {.forwards = false, .maxSpeed = 127}, true);
+
+//going to single stack
+chassis.turnToPoint(23.04, 41.219, 1000, {.forwards = true, .maxSpeed = 127}, true);
+chassis.moveToPoint(23.04, 41.219, 1000, {.forwards = true, .maxSpeed = 127}, true);
+
+//going to middle stack
+chassis.turnToPoint(10.186, 48.01, 1000, {.forwards = true, .maxSpeed = 127}, true);
+chassis.moveToPoint(10.186, 448.01, 1000, {.forwards = true, .maxSpeed = 127}, true);
+pros::delay(200);
+setIntake(0);
+
+//going backwards 
+chassis.moveToPose(36.141, 0.071, 0, 2000, {.forwards = false, .maxSpeed = 127}, true);
+//dropping off mogo
+chassis.moveToPose(43.402, -14.692, 155, 2000, {.forwards = false, .maxSpeed = 127}, true);
+setMogo(false);
+
+//going to new mogo and clamping
+chassis.moveToPose(31.597, -20, 62, 2000, {.forwards = false, .maxSpeed = 127 }, true);
+setMogo(true);
+
+//going for ring
+chassis.turnToPoint(26.2 ,-39.83, 1000, {.forwards = true, .maxSpeed = 127}, false);
+setIntake(11000);
+chassis.moveToPoint(26.2, -29.83, 1000, {.forwards = true, .maxSpeed = 127}, true);
+
+//touch ladder
+chassis.moveToPose(10.29, -26.62,315,  1000, {.forwards = true, .maxSpeed = 127}, false);
 }
 
 
+
+void redNegative() {
+
+//going to first mogo 
+chassis.setPose(-58.772, 36.387, 270);
+chassis.moveToPoint(-33.202, 36.387, 1000, {.forwards = false, .maxSpeed = 127}, true);
+chassis.swingToHeading(180, lemlib::DriveSide::LEFT, 1000, {}, true);
+chassis.moveToPose(-24.108, 27.227,180,1000, {.forwards = false, .maxSpeed = 127}, false);
+setMogo(true);
+
+
+
+//turning towards middle stack and intaking 1
+chassis.turnToPoint(-9.701, 39.037, 1000, {.forwards = true, .maxSpeed = 127}, true);
+setIntake(11000);
+chassis.moveToPoint(-9.701, 39.037, 1000, {.forwards = true, .maxSpeed = 127}, true);
+
+//going backwards for single stack
+chassis.moveToPoint(-22.07, 32.003, 1000, {.forwards = false, .maxSpeed = 127}, true);
+
+//going to single stack
+chassis.turnToPoint(-23.04, 41.219, 1000, {.forwards = true, .maxSpeed = 127}, true);
+chassis.moveToPoint(-23.04, 41.219, 1000, {.forwards = true, .maxSpeed = 127}, true);
+
+//going to middle stack
+chassis.turnToPoint(-10.186, 48.01, 1000, {.forwards = true, .maxSpeed = 127}, true);
+chassis.moveToPoint(-10.186, 448.01, 1000, {.forwards = true, .maxSpeed = 127}, true);
+pros::delay(200);
+setIntake(0);
+
+//going backwards 
+chassis.moveToPose(-36.141, 0.071, 180, 2000, {.forwards = false, .maxSpeed = 127}, true);
+//dropping off mogo
+chassis.moveToPose(-43.402, -14.692, 25, 2000, {.forwards = false, .maxSpeed = 127}, true);
+setMogo(false);
+
+//going to new mogo and clamping
+chassis.moveToPose(-31.597, -20, 118, 2000, {.forwards = false, .maxSpeed = 127 }, true);
+setMogo(true);
+
+//going for ring
+chassis.turnToPoint(-26.2 ,-39.83, 1000, {.forwards = true, .maxSpeed = 127}, false);
+setIntake(11000);
+chassis.moveToPoint(-26.2, -29.83, 1000, {.forwards = true, .maxSpeed = 127}, true);
+
+//touch ladder
+chassis.moveToPose(-10.29, -26.62, 225,  1000, {.forwards = true, .maxSpeed = 127}, false);
+}
+
+void progSkills() {
+    
+    /*
+    rightMotors.move(15);
+    leftMotors.move(15);
+    pros::delay(2000);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    */
+    // final skills
+   
+    chassis.setPose(-58, 0, 90);
+    setIntake(11000);
+    pros::delay(1000);
+    rightMotors.move(50);
+    leftMotors.move(50);
+    pros::delay(600);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    pros::delay(100);
+    chassis.turnToPoint(-47.5, -26, 1000, {.forwards = false});
+    chassis.moveToPoint(-47.5, -26, 1500, {.forwards = false, .maxSpeed=60});
+    conveyor.move(0);
+    pros::delay(850);
+    setMogo(true);  
+    chassis.turnToPoint(-58, -50, 1000);
+    pros::delay(10);
+    setIntake(11000);
+    pros::delay(300);
+    chassis.moveToPoint(-58, -50, 1500);
+    pros::delay(1200);
+    setIntake(11000);
+    pros::delay(1000);
+    rightMotors.move(-50);
+    leftMotors.move(-50);
+    pros::delay(200);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    chassis.turnToPoint(-65, -63, 1000,{.forwards=false});
+    pros::delay(1000);
+    rightMotors.move(-50);
+    leftMotors.move(-50);
+    pros::delay(900);
+    rightMotors.move(0);
+    leftMotors.move(0);
+ //end of right red corner
+    setMogo(false);
+    pros::delay(500);
+    rightMotors.move(50);
+    leftMotors.move(50);
+    pros::delay(300);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    chassis.turnToPoint(-47.5, -48, 1000);
+    chassis.moveToPoint(-47.5, -48, 1000);
+    pros::delay(50);
+    chassis.turnToPoint(-47.5, 0, 1500,{.forwards=false});
+    chassis.moveToPoint(-47.5, 0, 5000,{.forwards=false});
+    // move from right corner to mid line
+     // edit these two for transition with full field
+     
+    chassis.turnToPoint(-48.3, 22, 1500,{.forwards=false}); //edit these two with yeah
+    chassis.moveToPoint(-48.3, 22, 1500, {.forwards=false,.maxSpeed=50});
+    conveyor.move(0);
+    pros::delay(600);
+    //edit delay and stuff once clamp
+    setMogo(true);
+    pros::delay(500);  
+    chassis.turnToPoint(-54, 47.5, 1500);
+    setIntake(11000);
+    chassis.moveToPoint(-54, 47.5, 1500);
+    pros::delay(1000);
+    setIntake(11000);
+    pros::delay(1000);
+    chassis.turnToPoint(-64.5, 63, 1500,{.forwards=false});
+    chassis.moveToPoint(-64.5, 63, 1500,{.forwards=false});
+    conveyor.move(0);
+    pros::delay(1500);
+
+    setMogo(false);
+    pros::delay(200); // WORKING, 19 POINTS
+   
+    rightMotors.move(50);
+    leftMotors.move(50);
+    pros::delay(200);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    setIntake(127);
+    chassis.turnToPoint(-24, 48.5, 1000); // add to y
+    chassis.moveToPoint(-24, 48.5, 3000);
+   
+   
+    chassis.turnToPoint(39, 33, 1500,{.forwards=false});
+    chassis.moveToPoint(39, 33, 4000,{.forwards=false});
+    pros::delay(500);
+    chassis.turnToPoint(52, 25.5, 1500,{.forwards=false});
+    chassis.moveToPoint(52, 25.5, 3000,{.forwards=false, .maxSpeed=50});
+    pros::delay(1000);
+    setMogo(true);
+    pros::delay(500);
+    rightMotors.move(50);
+    leftMotors.move(50);
+    pros::delay(300);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    pros::delay(500);
+    chassis.turnToPoint(65, 64, 1000, {.forwards=false});
+    chassis.moveToPoint(65, 64, 3000,{.forwards=false});
+    pros::delay(1000);
+    setMogo(false);
+    pros::delay(300);
+    rightMotors.move(50);
+    leftMotors.move(50);
+    pros::delay(200);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    chassis.turnToPoint(48, 13, 1500,{.forwards=false});
+    chassis.moveToPoint(48, 13, 3000,{.forwards=false});
+    pros::delay(1000);
+    chassis.turnToPoint(45,6,1500,{.forwards=false});
+    chassis.moveToPoint(45,6,4000,{.forwards=false,.maxSpeed=70});
+    pros::delay(3000);
+    setMogo(true);
+    pros::delay(1000);
+    conveyor.move(127);
+    setIntake(11000);
+    pros::delay(1000);
+    chassis.turnToPoint(48,-30,1500,{.forwards=false});
+    chassis.moveToPoint(48,-30,2000,{.forwards=false});
+    pros::delay(1000);
+    chassis.turnToPoint(65,-65,1500,{.forwards=false});
+    chassis.moveToPoint(65,-65,2000,{.forwards=false});
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+   
+
+    // match auton
+    /*
+    }
+    
+    int side = 1;//1 is blue, -1 is red
+    int which = -1; // 1 is side with 4 rings, -1 is side with extra mogo
+    int theta = 0;
+    if (which == 1){
+        theta = 0;
+    }
+    if (which == -1){
+        theta = 180;
+    }
+    chassis.setPose(58*side,12*which,theta);
+    chassis.moveToPoint(58*side, 0,2000, {.forwards=false});
+    chassis.turnToHeading(-90*side, 1000);
+    pros::delay(1000);
+    rightMotors.move(-30);
+    leftMotors.move(-30);
+    pros::delay(300);
+    rightMotors.move(0);
+    leftMotors.move(0);
+   
+    conveyor.move(127);
+    pros::delay(2000);
+    rightMotors.move(30);
+    leftMotors.move(30);
+    pros::delay(500); // remove
+    rightMotors.move(0);
+    leftMotors.move(0);
+   
+    pros::delay(300);
+    chassis.turnToPoint(27*side, 23*which, 1000, {.forwards=false});  
+    pros::delay(1001);
+   chassis.moveToPoint(27*side, 23*which, 1500, {.forwards=false,.maxSpeed=50});  
+    conveyor.move(0);
+    pros::delay(2000);
+    clamp.set_value(true);
+    pros::delay(200);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    pros::delay(1000);
+    chassis.turnToPoint(23*side, 48*which, 2000);
+    fsintake.move(127);
+    chassis.moveToPoint(23*side, 48*which, 3000);
+    pros::delay(500);
+    fsintake.move(0);
+    pros::delay(200);
+    conveyor.move(127);
+    if (which == 1){
+        chassis.turnToPoint(10*side, 45, 2000);
+        chassis.moveToPoint(10*side, 45,  2000);        
+        pros::delay(300);
+        rightMotors.move(-50);
+        leftMotors.move(-50);
+        pros::delay(500);
+        rightMotors.move(0);
+        leftMotors.move(0);
+        pros::delay(300);
+    }
+    //chassis.turnToPoint(13*side, 18*which, 1000);
+    //chassis.moveToPoint(13*side, 18*which, 1000);
+     
+   */
+
+   
+}  
+
+
+    
+
+
+   
+
+
+
+
+
+
+
+
+   
+
+    // match auton
+    /*
+    int side = 1;//1 is blue, -1 is red
+    int which = -1; // 1 is side with 4 rings, -1 is side with extra mogo
+    int theta = 0;
+    if (which == 1){
+        theta = 0;
+    }
+    if (which == -1){
+        theta = 180;
+    }
+    chassis.setPose(58*side,12*which,theta);
+    chassis.moveToPoint(58*side, 0,2000, {.forwards=false});
+    chassis.turnToHeading(-90*side, 1000);
+    pros::delay(1000);
+    rightMotors.move(-30);
+    leftMotors.move(-30);
+    pros::delay(300);
+    rightMotors.move(0);
+    leftMotors.move(0);
+   
+    conveyor.move(127);
+    pros::delay(2000);
+    rightMotors.move(30);
+    leftMotors.move(30);
+    pros::delay(500); // remove
+    rightMotors.move(0);
+    leftMotors.move(0);
+   
+    pros::delay(300);
+    chassis.turnToPoint(27*side, 23*which, 1000, {.forwards=false});  
+    pros::delay(1001);
+   chassis.moveToPoint(27*side, 23*which, 1500, {.forwards=false,.maxSpeed=50});  
+    conveyor.move(0);
+    pros::delay(2000);
+    clamp.set_value(true);
+    pros::delay(200);
+    rightMotors.move(0);
+    leftMotors.move(0);
+    pros::delay(1000);
+    chassis.turnToPoint(23*side, 48*which, 2000);
+    fsintake.move(127);
+    chassis.moveToPoint(23*side, 48*which, 3000);
+    pros::delay(500);
+    fsintake.move(0);
+    pros::delay(200);
+    conveyor.move(127);
+    if (which == 1){
+        chassis.turnToPoint(10*side, 45, 2000);
+        chassis.moveToPoint(10*side, 45,  2000);        
+        pros::delay(300);
+        rightMotors.move(-50);
+        leftMotors.move(-50);
+        pros::delay(500);
+        rightMotors.move(0);
+        leftMotors.move(0);
+        pros::delay(300);
+    }
+    //chassis.turnToPoint(13*side, 18*which, 1000);
+    //chassis.moveToPoint(13*side, 18*which, 1000);
+     
+   */
+
+   
+
+
 void autonomous() {
+    moveAuton();
+    //blueNegative();
+    //redNegative();
 	/*
     // Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
     chassis.moveToPose(20, 15, 90, 4000);
@@ -339,6 +770,8 @@ void opcontrol() {
         setIntakeMotors();
 
         setLadyBrown();
+
+        setDoinkerSolenoids();
 
      //   setDoinker();
     }
