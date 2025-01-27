@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/misc.h"
 #include "pros/adi.hpp"
 #include <cstddef>
@@ -10,12 +11,12 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
 //CHANGE LATER
-pros::MotorGroup leftMotors({-5, -10, 9},
+pros::MotorGroup leftMotors({-5, -11, 18},
                             pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({18, 14, -11}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
+pros::MotorGroup rightMotors({13, 19, -9}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
-pros::Imu imu(10);
+pros::Imu imu(21);
 
 
 
@@ -35,8 +36,8 @@ lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
+                              12.75, // 10 inch track width
+                              lemlib::Omniwheel::NEW_325, // using new 4" omnis
                               360, // drivetrain rpm is 360
                               2 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
@@ -94,8 +95,8 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 //drive motors defined above
 
 //intake
-pros::Motor intake(17);
-pros::Motor conveyor(16);
+pros::Motor intake(-15);
+pros::Motor conveyor(-14);
 
 
 //pnuematics (doinker/mogo)
@@ -104,7 +105,7 @@ pros::adi::Pneumatics doinker('B', false);
 
 //ladyBrown
 //pros::Motor ladyBrown1(-16); //left
-pros::Motor ladyBrown2(19); //right
+//pros::Motor ladyBrown2(19); //right
 
 
 
@@ -189,7 +190,7 @@ void setIntakeMotors() { //call this during opcontrol
     // bottom trigger intakes and top trigger outtakes
     // link belt to the same thigies
 
-    int intakePower = 11000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)));
+    int intakePower = 7500 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)));
    
 
     setIntake(intakePower);
@@ -200,7 +201,7 @@ void setLadyPower(int power) {  // intake power   //call this during auton.
     
    // intake.move_voltage(power);
    // conveyor.move_voltage(power);
-   ladyBrown2.move_voltage(power);
+ //  ladyBrown2.move_voltage(power);
 }
 
 // driver controller functions
@@ -716,11 +717,164 @@ void progSkills() {
      
    */
 
+
+void progSkills1() {
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
+
+    chassis.setPose(-58, 0, 90);
+    //getting alliance stake
+    setIntake(10000);  //INTAKING
+    pros::delay(400);
+
+    //going to inbetween mogos
+    chassis.moveToPoint(-44, 0, 1000, {.forwards = true, .maxSpeed = 127}, true);
+    chassis.turnToHeading(0, 1000, {}, true);
+    setIntake(0);
+    
+    //going to first mogo
+    chassis.moveToPoint(-44.5, -15.1, 1000, {.forwards = false}, false);
+    pros::delay(400);
+    setMogo(true);
+    pros::delay(400);
+
+    //going to 1st donut
+    setIntake(10000);
+   // chassis.moveToPose(-28.5, -19, 125, 1000, {.forwards = true}, true);
+  //  chassis.moveToPose(-27.78, -24.8, 90, 1000, {.forwards = true}, true);
+    chassis.turnToPoint(-27.78, -24.8, 1000, {.forwards = true}, true);
+    chassis.moveToPoint(-27.78, -24.8, 1000, {.forwards = true}, true);
+
+    //going to 2nd donut
+    chassis.turnToPoint(-25.25, -41.49, 1000, {.forwards = true}, true);
+    chassis.moveToPoint(-25.25, -41.49, 1000, {.forwards = true}, true);
+    
+    
+    //lining to other donuts
+    chassis.moveToPose(-23, -47, 180, 1000, {.forwards = true},  true);
+
+    //going to corner area donuts
+    //3rd donut
+    //chassis.moveToPose(-22,-47, 270, 1000, {.forwards = true}, true );
+    chassis.moveToPose(-40.5, -46.8, 270, 1000, {.forwards = true}, true);
+    //4th donut
+    chassis.turnToPoint(-43.09, -53, 1000, {.forwards = true}, true);
+    chassis.moveToPoint(-43.09, -53, 1000, {.forwards = true}, true);
+
+    //5th donut
+    chassis.turnToPoint(-58.52, -47.56, 1000, {.forwards = true}, true);
+    chassis.moveToPoint(-58.52, -47.56, 1000, {.forwards = true}, true);
+
+    //going to corner and depositing mogo
+    chassis.moveToPose(-58.2, -56, 30, 1000, {.forwards = false});
+    pros::delay(300);
+    setMogo(false);
+    pros::delay(300);
+
+    //set everything to 0
+    setIntake(0);
+    setMogo(false);
+} //end of progSkills2
+
+
+void test() {
+    chassis.setPose(-59.03, -0, 90);
+    //getting alliance stake
+    setIntake(10000);  //INTAKING
+    pros::delay(400);
+
+    //going to inbetween mogos
+    chassis.moveToPoint(-46, 0, 1000, {.forwards = true, .maxSpeed = 127}, true);
+    chassis.turnToHeading(0, 1000, {}, true);
+    setIntake(0);
+    
+    //going to first mogo
+    chassis.moveToPoint(-47, -14, 1000, {.forwards = false}, true);
+    pros::delay(100);
+    setMogo(true);
+}
+
+
+
+
+void progSkills2() {
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
+
+
+    chassis.setPose(-58, 0, 90);
+    //getting alliance stake
+    setIntake(10000);  //INTAKING
+    pros::delay(400);
+
+
+    //going to inbetween mogos
+    chassis.moveToPoint(-44, 0, 5000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.turnToHeading(0, 5000, {}, false);
+    setIntake(0);
    
+    //going to first mogo
+    chassis.moveToPoint(-44.5, -15.1, 5000, {.forwards = false}, false);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+    chassis.moveToPoint(-44.5, -22, 5000, {.forwards = false}, false);
+    //going to 1st donut
+    setIntake(10000);
+    chassis.turnToPoint(-23.2, -23.3, 5000, {.forwards = true}, false);
+    chassis.moveToPoint(-23.2, -23.3, 5000, {.forwards = true}, false);
+    
+
+    //going to 2nd donut
+    
+    chassis.turnToPoint(-18, -49, 5000, {.forwards = true}, false);
+    chassis.moveToPoint(-18, -49, 5000, {.forwards = true}, false);   
+   
+   //going to all donuts in a line
+    chassis.turnToPoint(-58.2, -50.59, 5000, {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-56.2, -50.59, 5000, {.forwards = true, .maxSpeed = 65}, false);
+
+
+    //going to corner and depositing mogo
+    /*
+    chassis.turnToPoint(-65.33, -34.98, 1000, {.forwards = true, .maxSpeed = 127}, true);
+    chassis.turnToPoint(-52.22, -31.9, 1000, {.forwards = true, .maxSpeed = 127}, true);
+    chassis.moveToPose(-60, -53,195, 1000, {.forwards = false}, true);
+    chassis.moveToPose(-62, -54, 195, 1000, {.forwards = false}, true);
+    */
+
+    chassis.turnToPoint(-58, -54, 1000, {.forwards = false}, true);
+    chassis.moveToPoint(-58, -54, 1000, {.forwards = false}, true);
+
+    
+    pros::delay(300);
+    setMogo(false);
+    pros::delay(300);
+
+
+    //going to other mogo
+    chassis.moveToPose(-46, 0, 0, 1000, {.forwards = true}, true);
+    chassis.moveToPose(-46, 20, 0, 1000, {.forwards = false}, true);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //set everything to 0
+    setIntake(0);
+    setMogo(false);
+} //end of progSkills2
+
+
+
 
 
 void autonomous() {
-    moveAuton();
+   // moveAuton();
+   progSkills2(); //new ROUTE and will probably  use
+    // test(); //just going to mogo
+
     //blueNegative();
     //redNegative();
 	/*
@@ -769,9 +923,9 @@ void opcontrol() {
 
         setIntakeMotors();
 
-        setLadyBrown();
+       // setLadyBrown();
 
-        setDoinkerSolenoids();
+      //  setDoinkerSolenoids();
 
      //   setDoinker();
     }
