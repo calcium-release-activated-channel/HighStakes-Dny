@@ -841,35 +841,92 @@ void progSkillsSimple() {
     //getting in corner (NEED TO FIX)
   //  chassis.swingToHeading(10, lemlib::DriveSide::LEFT, 5000, {.maxSpeed = 65},false);
     chassis.moveToPose(-47.7, -50.3,0, 5000, {.forwards = true, .maxSpeed = 65}, true );
-  //  chassis.moveToPose(-47.7, -50.3,0, 5000, {.forwards = true, .maxSpeed = 65}, false );
-   // chassis.turnToPoint(-45.9, 8.2, 5000, {.forwards = true, .maxSpeed = 65}, false);
     chassis.turnToPoint(-64.33, -65,5000, {.forwards = false, .maxSpeed = 65}, false );
-   // chassis.moveToPoint(-59.28, -57,5000, {.forwards = false, .maxSpeed = 65}, false );
     chassis.moveToPose(-57.28, -57.69, 30, 5000, {.forwards = false}, false);
+    chassis.moveToPose(-58.25, -59.665, 180, 5000, {.forwards = false}, false);//ADDED NOW NOT SURE IF GOOD
+    //not sure if theta should be 0 or 180 ^^
 
     //dropping mogo off
     pros::delay(200);
     setMogo(false);
     pros::delay(200);
     
-    //testing a bit of second half
+    //testing a bit of second half//
+
      //NEGATING INTAKE REMIND TO MAKE IT NORMAL AGAIN
     setIntake(-10000);
 
     //going to other mogo
     chassis.moveToPose(-44.5, 0, 0, 1000, {.forwards = true}, false);
     chassis.moveToPose(-44.5, 14.5, 0, 1000, {.forwards = false}, false);
+    //clamping
+    setIntake(0);
+   chassis.moveToPoint(-44.5, 15.1, 5000, {.forwards = false}, false);
     pros::delay(200);
     setMogo(true);
     pros::delay(200);
+    chassis.moveToPoint(-44.5, 22, 5000, {.forwards = false,}, false);
+
+     //going to 1st donut (and now technically second)
     setIntake(10000);
+    chassis.moveToPoint(-44.5, 44.3, 5000, {.forwards = true, .maxSpeed = 65},false);
+    pros::delay(300);
+    chassis.moveToPoint(-44.5, 52.3, 5000, {.forwards = true, .maxSpeed = 65}, false); //going more down
+    pros::delay(1450);
+    chassis.moveToPoint(-44.5, 50.3, 5000, {.forwards = false, .maxSpeed = 65}, false);//going backwards
+
+    //going to 2nd donut
+    chassis.turnToPoint(-47.7, 50.3, 5000, {.forwards = true, .maxSpeed = 127},false); //changed to add jiggle bit
+    chassis.moveToPoint(-47.7, 50.3, 5000, {.forwards = true, .maxSpeed = 65},false);
+    pros::delay(200);
+    chassis.moveToPoint(-49.7, 50.3, 5000, {.forwards = true, .maxSpeed = 65},false); //moving a bit more forward
+    pros::delay(950);
+    chassis.moveToPoint(-47.7, 50.3, 5000, {.forwards = false, .maxSpeed = 65},false); //going back to before
+
+    //getting in corner (NEED TO FIX)
+  //  chassis.swingToHeading(10, lemlib::DriveSide::LEFT, 5000, {.maxSpeed = 65},false);
+    chassis.moveToPose(-47.7, -50.3,180, 5000, {.forwards = true, .maxSpeed = 65}, true );
+    chassis.turnToPoint(-64.33, -65,5000, {.forwards = false, .maxSpeed = 65}, false );
+    chassis.moveToPose(-57.28, -57.69, 150, 5000, {.forwards = false}, false);
+    chassis.moveToPose(-58.25, -59.665, 180, 5000, {.forwards = false}, false);//ADDED NOW NOT SURE IF GOOD
+    //not sure if theta should be 0 or 180 ^^
+
+     //dropping mogo off
+    pros::delay(200);
+    setMogo(false);
+    pros::delay(200);
+
+     //moving to other mogo in the back
+    chassis.moveToPose(-24.75, 35.7, 90, 5000, {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPose(32.5, 35.7, 90,5000, {.forwards = false, .maxSpeed = 65}, false); //turn around halfway
+    chassis.moveToPose(50.8, 29.6, 125, 5000, {.forwards = false, .maxSpeed = 65}, false);
+    //clamping
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+    //going into corner
+    chassis.turnToPoint(59, 53.6, 5000, {.forwards = false, .maxSpeed = 127}, false);
+    chassis.moveToPoint(63, 65.4, 5000, {.forwards = false, .maxSpeed = 127}, false);
     
-    
+    //opposite side thingy hopefully it works lmao
+
+
+    /*
+    chassis.turnToPoint(-43.413, 47.9,5000, {.forwards = true, .maxSpeed = 65}, false );
+    chassis.moveToPose(-43.413, 47.9, 30, 5000, {.forwards = true, .maxSpeed = 60}, false);
+    chassis.moveToPose(-43.413, 63, 30, 5000, {.forwards = true, .maxSpeed = 60}, false);
+    chassis.moveToPose(-46, 52.3,0, 5000, {.forwards = true, .maxSpeed = 65}, true );
+    chassis.turnToPoint(-64.33, 65,5000, {.forwards = false, .maxSpeed = 65}, false );
+    chassis.moveToPose(-57.28, 57.69, 30, 5000, {.forwards = false}, false);
+    chassis.moveToPose(-58.25, 59.665, 0, 5000, {.forwards = false}, false);
+    chassis.moveToPose(53.389, 23.185,0, 5000, {.forwards = false, .maxSpeed = 65}, false );
+    chassis.moveToPose(53.631, 57.14,270, 5000, {.forwards = false, .maxSpeed = 65}, false );
+    chassis.moveToPose(63.257, 61.836,0, 5000, {.forwards = false, .maxSpeed = 65}, false );
+    */
+
     //SECOND HALF
     
     /*
-    //NEGATING INTAKE REMIND TO MAKE IT NORMAL AGAIN
-    setIntake(-10000);
 
     //going to other mogo
     chassis.moveToPose(-44.5, 0, 0, 1000, {.forwards = true}, false);
@@ -899,7 +956,7 @@ void progSkillsSimple() {
 
     //UNCOMMENT DURING COMP
     /*
-    //moving to other mogo
+    //moving to other mogo in the back
     chassis.moveToPose(-24.75, 35.7, 90, 5000, {.forwards = true, .maxSpeed = 65} false);
     chassis.moveToPose(32.5, 35.7, 90,5000 {.forwards = false, .maxSpeed = 65}, false); //turn around halfway
     chassis.moveToPose(50.8, 29.6, 125, 5000, {.forwards = false, .maxSpeed = 65}, false);
