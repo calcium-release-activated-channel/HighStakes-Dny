@@ -807,9 +807,10 @@ void progSkillsSimple() {
     //getting alliance stake
      setIntake(10000);  //INTAKING
     pros::delay(400);
+    pros::delay(300);
 
     //going to inbetween mogos and turning
-    chassis.moveToPoint(-44, 0, 5000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-44.5, 0, 5000, {.forwards = true, .maxSpeed = 127}, false);
     chassis.turnToHeading(0, 5000, {}, false);
     setIntake(0);
 
@@ -820,27 +821,56 @@ void progSkillsSimple() {
     pros::delay(200);
     chassis.moveToPoint(-44.5, -22, 5000, {.forwards = false,}, false);
 
-    //going to 1st donut
+    //going to 1st donut (and now technically second)
+    setIntake(10000);
     chassis.moveToPoint(-44.5, -44.3, 5000, {.forwards = true, .maxSpeed = 65},false);
+    pros::delay(300);
+    chassis.moveToPoint(-44.5, -52.3, 5000, {.forwards = true, .maxSpeed = 65}, false); //going more down
+    pros::delay(1450);
+    chassis.moveToPoint(-44.5, -50.3, 5000, {.forwards = false, .maxSpeed = 65}, false);//going backwards
 
     //going to 2nd donut
-    chassis.turnToPoint(-47.7, -43, 5000, {.forwards = true, .maxSpeed = 65},false);
-    chassis.moveToPoint(-47.7, -43, 5000, {.forwards = true, .maxSpeed = 65},false);
+    chassis.turnToPoint(-47.7, -50.3, 5000, {.forwards = true, .maxSpeed = 127},false); //changed to add jiggle bit
+    chassis.moveToPoint(-47.7, -50.3, 5000, {.forwards = true, .maxSpeed = 65},false);
+    pros::delay(200);
+    chassis.moveToPoint(-49.7, -50.3, 5000, {.forwards = true, .maxSpeed = 65},false); //moving a bit more forward
+    pros::delay(950);
+    chassis.moveToPoint(-47.7, -50.3, 5000, {.forwards = false, .maxSpeed = 65},false); //going back to before
 
-    //getting in corner
-    chassis.swingToHeading(10, lemlib::DriveSide::LEFT, 5000, {.maxSpeed = 65},false);
-    //chassis.turnToPoint(-45.9, 8.2, 5000, {.forwards = true, .maxSpeed = 65}, false);
-    chassis.moveToPoint(-59.5, -56,5000, {.forwards = false, .maxSpeed = 65}, false );
+
+    //getting in corner (NEED TO FIX)
+  //  chassis.swingToHeading(10, lemlib::DriveSide::LEFT, 5000, {.maxSpeed = 65},false);
+    chassis.moveToPose(-47.7, -50.3,0, 5000, {.forwards = true, .maxSpeed = 65}, true );
+  //  chassis.moveToPose(-47.7, -50.3,0, 5000, {.forwards = true, .maxSpeed = 65}, false );
+   // chassis.turnToPoint(-45.9, 8.2, 5000, {.forwards = true, .maxSpeed = 65}, false);
+    chassis.turnToPoint(-64.33, -65,5000, {.forwards = false, .maxSpeed = 65}, false );
+   // chassis.moveToPoint(-59.28, -57,5000, {.forwards = false, .maxSpeed = 65}, false );
+    chassis.moveToPose(-57.28, -57.69, 30, 5000, {.forwards = false}, false);
 
     //dropping mogo off
-    pros::delay(300);
+    pros::delay(200);
     setMogo(false);
-    pros::delay(300);
+    pros::delay(200);
+    
+    //testing a bit of second half
+     //NEGATING INTAKE REMIND TO MAKE IT NORMAL AGAIN
+    setIntake(-10000);
 
+    //going to other mogo
+    chassis.moveToPose(-44.5, 0, 0, 1000, {.forwards = true}, false);
+    chassis.moveToPose(-44.5, 14.5, 0, 1000, {.forwards = false}, false);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+    setIntake(10000);
+    
     
     //SECOND HALF
     
     /*
+    //NEGATING INTAKE REMIND TO MAKE IT NORMAL AGAIN
+    setIntake(-10000);
+
     //going to other mogo
     chassis.moveToPose(-44.5, 0, 0, 1000, {.forwards = true}, false);
     chassis.moveToPose(-44.5, 14.5, 0, 1000, {.forwards = false}, false);
@@ -882,6 +912,9 @@ void progSkillsSimple() {
     chassis.moveToPoint(63, 65.4, 5000, {.forwards = false, .maxSpeed = 127}, false);
     */
     
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
 
 }//end of progSkillsSimple()
 
@@ -915,6 +948,12 @@ void progSkills2() {
     chassis.turnToPoint(-23.2, -23.3, 5000, {.forwards = true,.maxSpeed = 65}, false);
     chassis.moveToPoint(-23.2, -23.3, 5000, {.forwards = true,.maxSpeed = 65}, false);
     
+    //added going forward/backwards
+    pros::delay(150);
+    chassis.moveToPoint(-20.2, -23.3, 5000, {.forwards = true, .maxSpeed = 75}, false); //forward trying to intake
+    pros::delay(150);
+    chassis.moveToPoint(-23.2, -23.3, 5000, {.forwards = false, .maxSpeed = 65}, false); //backward
+    
 
     //going to 2nd donut
     
@@ -944,6 +983,8 @@ void progSkills2() {
     setMogo(true);
     pros::delay(200);
 
+    //OTHER HALF
+    
 
     
 
@@ -958,7 +999,7 @@ void progSkills2() {
 
 void autonomous() {
    // moveAuton();
-   progSkillsSimple();
+  progSkillsSimple(); //tries to get one ring on 2 mogos and 3 mogos into corners
   // progSkills2(); //new ROUTE and will probably  use
     // test(); //just going to mogo
 
