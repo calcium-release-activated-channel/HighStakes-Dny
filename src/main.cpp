@@ -16,10 +16,61 @@ pros::MotorGroup leftMotors({-5, -11, 18},
                             pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
 pros::MotorGroup rightMotors({13, 19, -9}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
+
 // Inertial Sensor on port 10
-pros::Imu imu(21);
+pros::Imu imu(21); 
+/*
+//odom wheels
+// horizontal tracking wheel encoder
+pros::Rotation horizontal_encoder(-20);
+// vertical tracking wheel encoder
+pros::adi::Encoder vertical_encoder('C', 'D', true);
+// horizontal tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
+// vertical tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
+*/
 
 
+//define color sensor
+//pros::Optical optical_sensor(20); //change port #
+
+/*\
+optical_sensor.set_led_pwm(100); // Set LED brightness to 100%
+// Get the color detected
+pros::c::optical_rgb_s_t color = optical_sensor.get_rgb();
+
+printf("Red: %f, Green: %f, Blue: %f\n", color.red, color.green, color.blue);
+
+or
+pros::Optical::hue hue = optical_sensor.get_hue();
+printf("Hue: %f\n", hue);
+
+void colorSortRed() {
+    if (optical_sensor.get_hue() > 330 && optical_sensor.get_hue() < 30) { //if red
+    pros::delay(200);
+    conveyor.move_voltage(-100);
+    pros::delay(200);
+
+    } else {
+    conveyor.move_voltage(127); 
+    }
+
+    pros::delay(10);
+}//end of colorSortRed
+
+void colorSortBlue() {
+    if(optical_sensor.get_hue() > 180 && optical_sensor.get_hue() < 300) {
+    pros::delay(200);
+    conveyor.move_voltage(-100);
+    pros::delay(200);
+    } else {
+    conveyor.move_voltage(127);
+    }
+     pros::delay(10);
+}
+
+*/
 
 
 /*
@@ -151,9 +202,9 @@ void setDoinker(bool extend) {
 }
 
 void setDoinkerSolenoids() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
         extendPiston = !extendPiston;  // Toggle the state
-        setMogo(extendPiston);         // Apply the toggled state to pneumatics
+        setDoinker(extendPiston);         // Apply the toggled state to pneumatics
         pros::delay(300);              // Delay to prevent multiple toggles from a single press
     }
     pros::delay(10);
@@ -325,7 +376,7 @@ void moveAuton() {
     rightMotors.move_velocity(0);
 }
 
-void blueNegative() {
+void blueNegativeOLD() {
 
 //going to first mogo 
 chassis.setPose(58.772, 36.387, 90);
@@ -1069,7 +1120,7 @@ void redNegative() {
     //going to first mogo
     chassis.moveToPoint(-40.38, 36.35, 1000, {.forwards = false, .maxSpeed = 65}, false);
     chassis.turnToPoint(-24, 24, 1000, {.forwards = false, .maxSpeed = 65}, false);
-    chassis.moveToPoint(-24, 24, 100,  {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-24, 24, 1000,  {.forwards = false, .maxSpeed = 65}, false);
 
     //getting mogo
     pros::delay(200);
@@ -1086,18 +1137,18 @@ void redNegative() {
     //FROM HERE COPY PASTE FOR SOLO AWP^, not really tho cause not doable for world qual awp
 
     //turning to mid stack
-    chassis.turnToPoint(-7, 44, 1000,{.forwards = true, .maxSpeed = 65}, false);
-    chassis.moveToPoint(-7, 44, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    chassis.turnToPoint(-10, 44, 1000,{.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-10, 44, 1000,  {.forwards = true, .maxSpeed = 65}, false);
     pros::delay(600);
 
     //backing up
-    setIntake(-12000);//reversing incase stuck
+    //setIntake(-12000);//reversing incase stuck
     chassis.moveToPoint(-23, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
     
     //going back to mid stack for other donut
-    chassis.turnToPoint(-8.3, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    chassis.turnToPoint(-9.3, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
     setIntake(12000);
-    chassis.moveToPoint(-8.3, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-9.3, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
     pros::delay(600);
 
     //backing up again
@@ -1144,15 +1195,19 @@ void redPositive() {
     //putting mogo near positive.
 
     //dropping mogo off
-    chassis.turnToPoint(-41.3, -56.8, 1000, {.forwards = false, .maxSpeed = 127}, true);
-    chassis.moveToPoint(-41.3, -56.8, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    chassis.turnToPoint(-41.3, -52, 1000, {.forwards = false, .maxSpeed = 65}, true);
+    chassis.moveToPoint(-41.3, -52, 1000, {.forwards = false, .maxSpeed = 65}, true);
     setMogo(false);
+    pros::delay(200);
+    chassis.moveToPoint(-41.3,-38,1000,{.forwards = false, .maxSpeed = 65}, true);
     //aligning with mogo
-    chassis.moveToPoint(-24.5, -46, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    chassis.turnToPoint(-24.5, -46, 1000, {.forwards = false, .maxSpeed = 65}, true);
+
+    chassis.moveToPoint(-24.5, -46, 1000, {.forwards = false, .maxSpeed = 65}, true);
 
     //bum rushing mid mogo
-    chassis.turnToPoint(-8.6, -46, 1000, {.forwards = false, .maxSpeed = 65}, false);
-    chassis.moveToPoint(-8.6, -46, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.turnToPoint(-10, -46, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-10, -46, 1000, {.forwards = false, .maxSpeed = 65}, false);
 
     //clamping 2nd mogo
      pros::delay(200);
@@ -1167,14 +1222,447 @@ void redPositive() {
    // setMogo(false);
 }
 
+void blueNegative() {
+     //set everything 0
+    setIntake(0);
+    setMogo(false);
+    //will try to go for 4 rings total.
+
+    
+    chassis.setPose(62, 36.3, 90);
+
+    //going to first mogo
+    chassis.moveToPoint(40.38, 36.35, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.turnToPoint(24, 24, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(24, 24, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+
+    //getting mogo
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //turning to solo stack
+    chassis.turnToPoint(24, 46, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(50);
+    setIntake(12000);
+    pros::delay(300);
+    chassis.moveToPoint(24, 46, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(800);
+    //FROM HERE COPY PASTE FOR SOLO AWP^, not really tho cause not doable for world qual awp
+
+    //turning to mid stack
+    chassis.turnToPoint(10, 44, 1000,{.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(10, 44, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(600);
+
+    //backing up
+    //setIntake(-12000);//reversing incase stuck
+    chassis.moveToPoint(24, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+    
+    //going back to mid stack for other donut
+    chassis.turnToPoint(10, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    setIntake(12000);
+    chassis.moveToPoint(10, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(600);
+
+    //backing up again
+    chassis.moveToPoint(23, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+    //setIntake(-12000);
+    //going to ladder
+    chassis.moveToPoint(23.5, 5, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(23.5, 5, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+
+    //set everything 0
+    setIntake(0);
+  //  setMogo(false);
+
+}//redNegative
+
+void bluePositive() {
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
+
+    //going to first mogo
+    chassis.setPose(61.5, -11.5, 90);
+    chassis.moveToPoint(41.38, -11.5, 1000,{.forwards = false, .maxSpeed = 65}, false  ); //midpoint
+    chassis.turnToPoint(24.25, -22.87, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(24.25, -22.87, 1000, {.forwards = false, .maxSpeed = 65}, false);//actually touched mogo here
+    //clamping
+     pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //turning to single stack
+    chassis.turnToPoint(24, -43.04, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    pros::delay(100);
+    setIntake(12000);
+    pros::delay(100);
+    chassis.moveToPoint(24, -43.04, 1000, {.forwards = true, .maxSpeed = 65},false);
+    pros::delay(900);
+
+    //FROM HERE ON EITHER GO STRAIGHT TO LADDER CODE *OR* positive and mogo rush
+
+    //straight to ladder..
+
+
+    //putting mogo near positive.
+
+    //dropping mogo off
+    chassis.turnToPoint(41.3, -52, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    chassis.moveToPoint(41.3, -52, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    setMogo(false);
+
+    pros::delay(200);
+    chassis.moveToPoint(41.3,-38,1000,{.forwards = false, .maxSpeed = 65}, true);
+    //aligning with mogo
+    chassis.turnToPoint(24.5, -46, 1000, {.forwards = false, .maxSpeed = 65}, true);
+    chassis.moveToPoint(24.5, -46, 1000, {.forwards = false, .maxSpeed = 127}, true);
+
+    //bum rushing mid mogo
+    chassis.turnToPoint(11, -47.5, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(11, -47.5, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(500);
+    setDoinker(true);
+    setIntake(0);
+
+    /*clamping 2nd mogo
+     pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+*/
+    chassis.moveToPoint(30,-46,1000,{.forwards = false, .maxSpeed = 65}, false);
+    setDoinker(false);
+    pros::delay(100);
+
+    chassis.turnToPoint(67,-67,1000, {.forwards = true, .maxSpeed =127}, false);
+    setDoinker(true);
+    chassis.moveToPoint(57,-57, 1000,{.forwards = true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    //going to ladder
+    //chassis.moveToPoint(21.7, -6.9, 1000, {.forwards = true, .maxSpeed = 127}, false);
+
+    //set everything 0
+//    setIntake(0);
+   // setMogo(false);
+}
+
+void blueNegativeElim() {
+     //set everything 0
+    setIntake(0);
+    setMogo(false);
+    //will try to go for 4 rings total.
+
+    
+    chassis.setPose(62, 36.3, 90);
+
+    //going to first mogo
+    chassis.moveToPoint(40.38, 36.35, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.turnToPoint(24, 24, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(24, 24, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+
+    //getting mogo
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //turning to solo stack
+    chassis.turnToPoint(24, 46, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(50);
+    setIntake(12000);
+    pros::delay(300);
+    chassis.moveToPoint(24, 46, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(800);
+    //FROM HERE COPY PASTE FOR SOLO AWP^, not really tho cause not doable for world qual awp
+
+    //turning to mid stack
+    chassis.turnToPoint(10, 44, 1000,{.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(10, 44, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(600);
+
+    //backing up
+    //setIntake(-12000);//reversing incase stuck
+    chassis.moveToPoint(24, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+    
+    //going back to mid stack for other donut
+    chassis.turnToPoint(10, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    setIntake(12000);
+    chassis.moveToPoint(10, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(600);
+
+    //backing up again
+    chassis.moveToPoint(23, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+    
+    //setIntake(-12000);
+    /*going to ladder
+    chassis.moveToPoint(23.5, 5, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(23.5, 5, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+*/
+
+    //set everything 0
+    setIntake(0);
+    setDoinker(true);
+
+    chassis.turnToPoint(69, 69, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(57, 57, 1000, {.forwards = true, .maxSpeed = 70}, false);
+    chassis.turnToPoint( 63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint( 63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint( 63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint( 63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+  //  setMogo(false);
+
+}
+void bluePositiveElim() {
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
+
+    //going to first mogo
+    chassis.setPose(61.5, -11.5, 90);
+    chassis.moveToPoint(41.38, -11.5, 1000,{.forwards = false, .maxSpeed = 75}, false  ); //midpoint
+    chassis.turnToPoint(24.25, -22.87, 1000, {.forwards = false, .maxSpeed = 75}, false);
+    chassis.moveToPoint(24.25, -22.87, 1000, {.forwards = false, .maxSpeed = 75}, false);//actually touched mogo here
+    //clamping
+     pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //turning to single stack
+    chassis.turnToPoint(24, -43.04, 1000, {.forwards = false, .maxSpeed = 75}, false);
+    pros::delay(300);
+    setIntake(12000);
+    pros::delay(700);
+    chassis.moveToPoint(24, -43.04, 1000, {.forwards = true, .maxSpeed = 75},false);
+    pros::delay(700);
+
+    //FROM HERE ON EITHER GO STRAIGHT TO LADDER CODE *OR* positive and mogo rush
+
+    //straight to ladder..
+
+
+    //putting mogo near positive.
+
+    //dropping mogo off
+    chassis.turnToPoint(41.3, -32, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    chassis.moveToPoint(41.3, -32, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    setMogo(false);
+
+    pros::delay(200);
+    chassis.moveToPoint(41.3,-38,1000,{.forwards = false, .maxSpeed = 75}, true);
+    //aligning with mogo
+    chassis.turnToPoint(24.5, -46, 1000, {.forwards = false, .maxSpeed = 70}, true);
+    chassis.moveToPoint(24.5, -46, 1000, {.forwards = false, .maxSpeed = 127}, true);
+
+    //bum rushing mid mogo
+    chassis.turnToPoint(11, -42.5, 1000, {.forwards = true, .maxSpeed = 70}, false);
+    chassis.moveToPoint(11, -42.5, 1000, {.forwards = true, .maxSpeed = 70}, false);
+    pros::delay(350);
+    setDoinker(true);
+    setIntake(0);
+
+    /*clamping 2nd mogo
+     pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+*/
+    chassis.moveToPoint(30,-46,1000,{.forwards = false, .maxSpeed = 85}, false);
+    setDoinker(false);
+    pros::delay(100);
+
+    chassis.turnToPoint(67,-67,1000, {.forwards = true, .maxSpeed =127}, false);
+    setDoinker(true);
+    chassis.moveToPoint(54.5,-57.5, 1000,{.forwards = true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    //going to ladder
+    //chassis.moveToPoint(21.7, -6.9, 1000, {.forwards = true, .maxSpeed = 127}, false);
+
+    //set everything 0
+//    setIntake(0);
+   // setMogo(false);
+}
+
+void redNegativeElim() {
+     //set everything 0
+    setIntake(0);
+    setMogo(false);
+    //will try to go for 4 rings total.
+
+    
+    chassis.setPose(-62, 36.3, 270);
+
+    //going to first mogo
+    chassis.moveToPoint(-40.38, 36.35, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.turnToPoint(-24, 24, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-24, 24, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+
+    //getting mogo
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //turning to solo stack
+    chassis.turnToPoint(-24, 46, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(50);
+    setIntake(12000);
+    pros::delay(300);
+    chassis.moveToPoint(-24, 46, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(800);
+    //FROM HERE COPY PASTE FOR SOLO AWP^, not really tho cause not doable for world qual awp
+
+    //turning to mid stack
+    chassis.turnToPoint(-10, 44, 1000,{.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-10, 44, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(600);
+
+    //backing up
+    //setIntake(-12000);//reversing incase stuck
+    chassis.moveToPoint(-24, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+    
+    //going back to mid stack for other donut
+    chassis.turnToPoint(-10, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    setIntake(12000);
+    chassis.moveToPoint(-10, 49.45, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(600);
+
+    //backing up again
+    chassis.moveToPoint(-23, 46, 1000,  {.forwards = false, .maxSpeed = 65}, false);
+    
+    //setIntake(-12000);
+    /*going to ladder
+    chassis.moveToPoint(23.5, 5, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+    chassis.moveToPoint(23.5, 5, 1000,  {.forwards = true, .maxSpeed = 65}, false);
+*/
+
+    //set everything 0
+    setIntake(0);
+    setDoinker(true);
+
+    chassis.turnToPoint(-69, 69, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-57, 57, 1000, {.forwards = true, .maxSpeed = 70}, false);
+    chassis.turnToPoint( -63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(-70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint( -63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(-70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint( -63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(-70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint( -63, 69, 1000, {.forwards = true, .maxSpeed = 80}, false);
+    chassis.turnToPoint(-70, 60, 1000, {.forwards = true, .maxSpeed = 80}, false);
+  //  setMogo(false);
+
+}
+void redPositiveElim() {
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
+
+    //going to first mogo
+    chassis.setPose(-61.5, -11.5, 270);
+    chassis.moveToPoint(-41.38, -11.5, 1000,{.forwards = false, .maxSpeed = 70}, false  ); //midpoint
+    chassis.turnToPoint(-24.25, -22.87, 1000, {.forwards = false, .maxSpeed = 70}, false);
+    chassis.moveToPoint(-24.25, -22.87, 1000, {.forwards = false, .maxSpeed = 70}, false);//actually touched mogo here
+    //clamping
+     pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+
+    //turning to single stack
+    chassis.turnToPoint(-24, -43.04, 1000, {.forwards = false, .maxSpeed = 70}, false);
+    pros::delay(100);
+    setIntake(12000);
+    pros::delay(500);
+    chassis.moveToPoint(-24, -43.04, 1000, {.forwards = true, .maxSpeed = 70},false);
+    pros::delay(700);
+
+    //FROM HERE ON EITHER GO STRAIGHT TO LADDER CODE *OR* positive and mogo rush
+
+    //straight to ladder..
+
+
+    //putting mogo near positive.
+
+    //dropping mogo off
+    chassis.turnToPoint(-41.3, -52, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    chassis.moveToPoint(-41.3, -52, 1000, {.forwards = false, .maxSpeed = 127}, true);
+    setMogo(false);
+
+    pros::delay(200);
+    chassis.moveToPoint(-41.3,-38,1000,{.forwards = false, .maxSpeed = 70}, true);
+    //aligning with mogo
+    chassis.turnToPoint(-24.5, -49, 1000, {.forwards = false, .maxSpeed = 65}, true);
+    chassis.moveToPoint(-24.5, -49, 1000, {.forwards = false, .maxSpeed = 127}, true);
+
+    //bum rushing mid mogo
+    chassis.turnToPoint(-11, -55, 1000, {.forwards = true, .maxSpeed = 70}, false);
+    chassis.moveToPoint(-11, -55, 1000, {.forwards = true, .maxSpeed = 70}, false);
+    pros::delay(500);
+    setDoinker(true);
+    setIntake(0);
+
+    /*clamping 2nd mogo
+     pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+*/
+    chassis.moveToPoint(-30,-55,1000,{.forwards = false, .maxSpeed = 75}, false);
+    setDoinker(false);
+    pros::delay(100);
+
+    chassis.turnToPoint(-67,-67,1000, {.forwards = true, .maxSpeed =127}, false);
+    setDoinker(true);
+    chassis.moveToPoint(-57,-57, 1000,{.forwards = true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-69,-60,1000,{.forwards=true, .maxSpeed = 127}, false);
+    chassis.turnToPoint(-60,-69, 1000, {.forwards= true, .maxSpeed = 127}, false);
+    //going to ladder
+    //chassis.moveToPoint(21.7, -6.9, 1000, {.forwards = true, .maxSpeed = 127}, false);
+
+    //set everything 0
+//    setIntake(0);
+   // setMogo(false);
+}
+
 void autonomous() {
-   // moveAuton();
-  progSkillsSimple(); //tries to get one ring on 2 mogos and 3 mogos into corners
+  while (true) {
+  //  colorSortRed();  //takes out reds
+   // colorSortBlue(); //takes out blues
+
+
+   //paste whatever auton in here
+   
+  }
+  
+    // moveAuton();
+//  progSkillsSimple(); //tries to get one ring on 2 mogos and 3 mogos into corners
   // progSkills2(); //new ROUTE and will probably  use
     // test(); //just going to mogo
 
     //blueNegative();
     //redNegative();
+    //bluePositive();
+    //redPositive();
+    //blueNegativeElim();
+   // bluePositiveElim();
+    //redNegativeElim();
+    //rePositiveElim();
 	/*
     // Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
     chassis.moveToPose(20, 15, 90, 4000);
@@ -1223,7 +1711,7 @@ void opcontrol() {
 
        // setLadyBrown();
 
-      //  setDoinkerSolenoids();
+        setDoinkerSolenoids();
 
      //   setDoinker();
     }
