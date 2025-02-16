@@ -230,73 +230,111 @@ void setIntakeMotors() { //call this during opcontrol
 
 
 //lady brown stuff
-/*
-void setLBPower(int power) {
-    //directly controlling
-    ladyBrown.move_voltage(power);
-   
-}
-
-//set motors to hold
-//ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
-void setLadyBrown() {
-    //during drive getting values?
-    int ladyPower = 8000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)));
-
-
-    setLBPower(ladyPower);
-
-}
-*/
-
 // Arm positions (potentiometer values)
 const int ARM_POSITIONS[] = {3889, 3430, 1830}; // Passive, Loading, Scoring
 
-// Function to set arm power
+int targetPosition = -1; // -1 means no macro is running
+bool isManualControl = false; // Track manual movement
+
+// Function to set arm power (Using Velocity Instead of Voltage)
 void setLBPower(int power) {
-    ladyBrown.move_voltage(power);
+    ladyBrown.move_velocity(power); // Uses velocity instead of voltage
 }
 
-// Moves arm to a target position using a simple range-based check
-void moveArmToPosition(int target) {
-    int currentPos = lbSensor.get_value();
-    int power = (currentPos > target) ? -8000 : 8000; // Move in the correct direction
+// Background task for macros
+void armControlTask(void* param) {
+    while (true) {
+        if (targetPosition != -1 && !isManualControl) { 
+            int currentPos = lbSensor.get_value();
+           // int error = targetPosition - currentPos;
+           int error = currentPos - targetPosition;
+            int power = (error > 0) ? 100 : -100; // Velocity control (-100 to 100)
 
-    // Slow down when close
-    if (abs(currentPos - target) < 300) {
-        power /= 2;
+            // **FIX:** Slow down gradually when approaching target
+            if (abs(error) < 300) power = (error > 0) ? 50 : -50;
+            if (abs(error) < 150) power = (error > 0) ? 25 : -25;
+
+            // **FIX:** Stop when inside the target range AND ensure motor does not reverse direction
+            if (abs(error) < 50) { // Error threshold for stopping
+                power = 0;
+                targetPosition = -1; // Stop tracking macro once reached
+            }
+
+            setLBPower(power);
+        }
+
+        pros::delay(10); // Prevent CPU overuse
     }
-
-    // Stop if we *pass* the target
-    if ((power > 0 && currentPos <= target) || (power < 0 && currentPos >= target)) {
-        power = 0;
-    }
-
-    setLBPower(power);
 }
-
 
 // Main function to control Lady Brown
 void setLadyBrown() {
-    // Manual control with X (up) and B (down)
-    int ladyPower = 8000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) 
-                          - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)));
+    // Manual movement (X = Up, B = Down)
+    bool xPressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_X);
+    bool bPressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
     
-    if (ladyPower != 0) {
-        setLBPower(ladyPower);
-        return; // Manual control overrides macros
+    int manualPower = 100 * (xPressed - bPressed); // Using max 100 velocity instead of voltage
+
+    if (manualPower != 0) {
+        targetPosition = -1; // Cancel macros when manually controlling
+        isManualControl = true; // Track manual mode
+        setLBPower(manualPower);
+    } else if (isManualControl) { 
+        // **FIX:** Stop movement when button is released
+        isManualControl = false;
+        setLBPower(0);
     }
 
-    // Macro control (press a button to move to a preset position)
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-        moveArmToPosition(ARM_POSITIONS[0]); // Passive
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-        moveArmToPosition(ARM_POSITIONS[1]); // Loading
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-        moveArmToPosition(ARM_POSITIONS[2]); // Scoring
+    // **FIX:** Ensure macros actually set `targetPosition` properly
+    if (!isManualControl) {
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+            targetPosition = ARM_POSITIONS[0]; // Passive
+        } 
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+            targetPosition = ARM_POSITIONS[1]; // Loading
+        } 
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+            targetPosition = ARM_POSITIONS[2]; // Scoring
+        }
     }
 }
+
+/**
+ * Runs initialization code. This occurs as soon as the program is started.
+ */
+void initialize() {
+    // Set motors to brake mode
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    // Start the arm control task
+    pros::Task armTask(armControlTask);
+
+    // Set other motor brake modes
+    leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+    pros::lcd::initialize(); // Initialize brain screen
+    chassis.calibrate(); // Calibrate sensors
+
+    // Thread for brain screen and position logging
+    pros::Task screenTask([&]() {
+        while (true) {
+            pros::lcd::print(0, "X: %f", chassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);
+            pros::lcd::print(3, "ADI Encoder: %i", horizontal_encoder.get_value());
+            pros::lcd::print(4, "LB sensor: %i", lbSensor.get_value());
+            pros::lcd::print(5, "Target Pos: %i", targetPosition);
+            pros::lcd::print(6, "Manual Mode: %i", isManualControl);
+            pros::lcd::print(7, "Error: %i", targetPosition - lbSensor.get_value());
+
+            pros::delay(50);
+        }
+    });
+}
+
+
+
 
 
 /**
@@ -305,11 +343,15 @@ void setLadyBrown() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+ /*
 void initialize() {
     //set motors to coast
     
     //MOTOR STUFF
 	ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    //armTask = pros::Task(armControlTask, nullptr);
+    pros::Task armTask(armControlTask);
+
     
     leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -338,12 +380,13 @@ void initialize() {
 
             // print measurements from the horizontal wheel
         pros::lcd::print(3, "ADI Encoder: %i", horizontal_encoder.get_value());
-       
+            pros::lcd::print(4, "LB sensor: %i", lbSensor.get_value());
 
             pros::delay(50);
         }
     });
 }
+*/
 
 /**
  * Runs while the robot is disabled
@@ -1809,6 +1852,8 @@ void opcontrol() {
         setIntakeMotors();
 
         setLadyBrown();
+
+        //moveArmToPosition();
 
         setDoinkerSolenoids();
 
