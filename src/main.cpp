@@ -261,30 +261,21 @@ void setLBPower(int power) {
 // Moves arm to a target position using a simple range-based check
 void moveArmToPosition(int target) {
     int currentPos = lbSensor.get_value();
-    int error = target - currentPos;
-    int threshold = 100; // Acceptable range
-    int slowThreshold = 300; // Start slowing down before reaching target
+    int power = (currentPos > target) ? -8000 : 8000; // Move in the correct direction
 
-    // If the arm is far from the target, move full speed
-    int power = (error > 0) ? 8000 : -8000;
-
-    // If getting close to the target, slow down
-    if (abs(error) < slowThreshold) {
+    // Slow down when close
+    if (abs(currentPos - target) < 300) {
         power /= 2;
     }
 
-    // If we overshot (past the target in the wrong direction), reverse slightly
-    if (abs(error) < threshold) {
-        power = (error > 0) ? 2000 : -2000; // Small correction power
-    }
-
-    // If inside the final range, stop completely
-    if (abs(error) < threshold / 2) {
+    // Stop if we *pass* the target
+    if ((power > 0 && currentPos <= target) || (power < 0 && currentPos >= target)) {
         power = 0;
     }
 
     setLBPower(power);
 }
+
 
 // Main function to control Lady Brown
 void setLadyBrown() {
