@@ -4,6 +4,7 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/misc.h"
 #include "pros/adi.hpp"
+#include "pros/motors.h"
 #include <cstddef>
 
 
@@ -19,17 +20,20 @@ pros::MotorGroup rightMotors({13, 19, -9}, pros::MotorGearset::blue); // right m
 
 // Inertial Sensor on port 10
 pros::Imu imu(21); 
-/*
-//odom wheels
-// horizontal tracking wheel encoder
-pros::Rotation horizontal_encoder(-20);
-// vertical tracking wheel encoder
-pros::adi::Encoder vertical_encoder('C', 'D', true);
-// horizontal tracking wheel
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
-// vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
-*/
+
+//horiontal odom wheel
+pros::adi::Encoder horizontal_encoder('G', 'H', true); //check if need be reversed
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_325, -3); //POSSIBLY CHANGE DISTANCE IDFK
+
+
+//lady brown code
+
+//array to store 4 positions
+//while loop and getting to target value
+//maybe pid but probably not if using target value cause potentiometer is absolute
+
+
+
 
 
 //define color sensor
@@ -73,17 +77,6 @@ void colorSortBlue() {
 */
 
 
-/*
-// tracking wheels
-// horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
-pros::Rotation horizontalEnc(20);
-// vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-pros::Rotation verticalEnc(-11);
-// horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
-// vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
-*/
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
@@ -121,7 +114,7 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 // sensors for odometry
 lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
-                            nullptr, // horizontal tracking wheel
+                            &horizontal_tracking_wheel, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
@@ -155,9 +148,13 @@ pros::Motor conveyor(-14);
 pros::adi::Pneumatics mogo('A', false);
 pros::adi::Pneumatics doinker('B', false);
 
-//ladyBrown
-//pros::Motor ladyBrown1(-16); //left
-//pros::Motor ladyBrown2(19); //right
+//ladyBrown + lb potentiomter
+pros::Motor ladyBrown(-1); //single motor check if needed to be reversed and port # (assuming positive is forwards toward intake)
+pros::adi::Potentiometer lbSensor('E'); //range of 270* get proper measurements i want
+//passive = up, potentiometer value = 
+//loading = right, potentiometer value = 
+//scoring = left, potentiometer value = 
+//going down = down, potentiometer value = 
 
 
 
@@ -211,28 +208,10 @@ void setDoinkerSolenoids() {
 }
 
 
-/*
-void setMogo() {
-    bool pistonToggle = false;
-    if (controller.get_digital(DIGITAL_L1)) {
-        if (pistonToggle == false) {
-            mogo.extend();
-            pros::delay(500);
-            pistonToggle = true;
-        } else {
-            mogo.retract();
-            pros::delay(500);
-            pistonToggle = false;
-        }
-    }
-pros::delay(10);
-
-}
-*/
 
 void setIntake(int power) {  // intake power   //call this during auton.
     
-    intake.move_voltage(power);
+    intake.move_voltage(power*1.2); //possibly change this value
     conveyor.move_voltage(power);
 }
 
@@ -247,49 +226,87 @@ void setIntakeMotors() { //call this during opcontrol
 
     setIntake(intakePower);
    
-}  
-
-void setLadyPower(int power) {  // intake power   //call this during auton.
-    
-   // intake.move_voltage(power);
-   // conveyor.move_voltage(power);
- //  ladyBrown2.move_voltage(power);
 }
 
-// driver controller functions
-void setLadyBrown() { //call this during opcontrol
 
-    // bottom trigger intakes and top trigger outtakes
-    // link belt to the same thigies
-
-   // int ladyPower = 11000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)));
-    int ladyPower = 11000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)));
-
-    setLadyPower(ladyPower);
-   
-}  
-
-
-
+//lady brown stuff
 /*
-void setDoinker() {
- bool pistonToggle = false;
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        if (pistonToggle == false) {
-            doinker.extend();
-            pros::delay(500);
-            pistonToggle = true;
-        } else {
-            doinker.retract();
-            pros::delay(500);
-            pistonToggle = false;
-        }
-    
-    }
-    pros::delay(10);
+void setLBPower(int power) {
+    //directly controlling
+    ladyBrown.move_voltage(power);
+   
+}
+
+//set motors to hold
+//ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+void setLadyBrown() {
+    //during drive getting values?
+    int ladyPower = 8000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)));
+
+
+    setLBPower(ladyPower);
 
 }
 */
+
+// Arm positions (potentiometer values)
+const int ARM_POSITIONS[] = {3889, 3430, 1830}; // Passive, Loading, Scoring
+
+// Function to set arm power
+void setLBPower(int power) {
+    ladyBrown.move_voltage(power);
+}
+
+// Moves arm to a target position using a simple range-based check
+void moveArmToPosition(int target) {
+    int currentPos = lbSensor.get_value();
+    int error = target - currentPos;
+    int threshold = 100; // Acceptable range
+    int slowThreshold = 300; // Start slowing down before reaching target
+
+    // If the arm is far from the target, move full speed
+    int power = (error > 0) ? 8000 : -8000;
+
+    // If getting close to the target, slow down
+    if (abs(error) < slowThreshold) {
+        power /= 2;
+    }
+
+    // If we overshot (past the target in the wrong direction), reverse slightly
+    if (abs(error) < threshold) {
+        power = (error > 0) ? 2000 : -2000; // Small correction power
+    }
+
+    // If inside the final range, stop completely
+    if (abs(error) < threshold / 2) {
+        power = 0;
+    }
+
+    setLBPower(power);
+}
+
+// Main function to control Lady Brown
+void setLadyBrown() {
+    // Manual control with X (up) and B (down)
+    int ladyPower = 8000 * ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) 
+                          - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)));
+    
+    if (ladyPower != 0) {
+        setLBPower(ladyPower);
+        return; // Manual control overrides macros
+    }
+
+    // Macro control (press a button to move to a preset position)
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        moveArmToPosition(ARM_POSITIONS[0]); // Passive
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        moveArmToPosition(ARM_POSITIONS[1]); // Loading
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        moveArmToPosition(ARM_POSITIONS[2]); // Scoring
+    }
+}
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -301,7 +318,8 @@ void initialize() {
     //set motors to coast
     
     //MOTOR STUFF
-	
+	ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    
     leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
@@ -326,6 +344,11 @@ void initialize() {
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
+
+            // print measurements from the horizontal wheel
+        pros::lcd::print(3, "ADI Encoder: %i", horizontal_encoder.get_value());
+       
+
             pros::delay(50);
         }
     });
@@ -847,6 +870,15 @@ void test() {
     setMogo(true);
 }
 
+void progSkills3() {
+    setIntake(0);
+    setMogo(false);
+
+    chassis.setPose(-58, 0, 270);
+    chassis.turnToHeading(180, 5000, {}, false);
+
+}
+
 
 void progSkillsSimple() {
     //set everything 0
@@ -1030,7 +1062,78 @@ void progSkillsSimple() {
 
 }//end of progSkillsSimple()
 
+void progSkillsnoLB() {
+    //set everything 0
+    setIntake(0);
+    setMogo(false);
 
+    chassis.setPose(-58, 0, 90);
+    //getting alliance stake
+     setIntake(12000);  //INTAKING
+    pros::delay(400);
+    pros::delay(300);
+
+    //going to inbetween mogos and turning
+    chassis.moveToPoint(-44.5, 0, 5000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.turnToHeading(0, 5000, {}, false);
+    setIntake(0);
+
+     //going to first mogo and clamping
+    chassis.moveToPoint(-44.5, -15.1, 5000, {.forwards = false}, false);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(200);
+    chassis.moveToPoint(-44.5, -22, 5000, {.forwards = false,}, false);
+    setIntake(12000);
+
+    //collect donut above
+    chassis.turnToPoint(-21,-23.7, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-21, -23.7, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    pros::delay(500);
+    
+    //collecting mid donut
+    chassis.turnToPoint(1, 1, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(1, 1, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    pros::delay(500);
+
+    //move back to reposition for other donuts
+    chassis.turnToPoint(-21, -23.7, 1000, {.forwards = true, . maxSpeed = 127},  false);
+    chassis.moveToPoint(-21, -23.7, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    pros::delay(100);
+    chassis.turnToPoint(-21, -48.5, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-21, -48.5, 1000, {.forwards = true, .maxSpeed = 127}, false); //donut pickup 1
+    pros::delay(500);
+    chassis.turnToPoint(-61, -48, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-49, -48, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    pros::delay(150);
+    chassis.moveToPoint(-61, -48, 1000, {.forwards = true, .maxSpeed = 127}, false); //pickup 2
+    pros::delay(550);
+    chassis.turnToPoint(-45, -60, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-45, -60, 1000, {.forwards = true, .maxSpeed = 127}, false); //last donut of stack
+    pros::delay(500);
+
+    chassis.turnToPoint(-45, -45, 1000, {.forwards = true, .maxSpeed =127}, false);
+    chassis.moveToPoint(-45, -45, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.turnToHeading(45, 1000, {}, false);
+    setIntake(0);
+
+    chassis.turnToPoint(-68, -68, 1000, {.forwards = false, .maxSpeed = 127}, false); // dropping mogo off
+    chassis.moveToPoint(-68, -68, 1000, {.forwards = false, .maxSpeed = 127}, false);
+    setMogo(false);
+    chassis.setPose(-69, -65, 45); //realign
+
+    chassis.moveToPoint(-47, -47, 1000, {.forwards = true, .maxSpeed = 127}, false); //position for next mogo
+    chassis.turnToPoint(-47, 24, 1000, {.forwards = false, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-47, 24, 1000, {.forwards = false, .maxSpeed = 127}, false);
+    setMogo(true);
+
+    chassis.turnToPoint(-20, 26, 1000, {.forwards = true, .maxSpeed = 127}, false);
+    chassis.moveToPoint(-20, 26, 1000, {.forwards = true, .maxSpeed = 127}, false); //pickup 1st donut of new stack
+    pros::delay(450);
+
+    chassis.turnToPoint(-23, 49, 1000, {.forwards = true, .maxSpeed = 127}, false);
+
+}
 
 void progSkills2() {
     //set everything 0
@@ -1641,12 +1744,17 @@ void redPositiveElim() {
 }
 
 void autonomous() {
+    //setting lb to hold..?
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+
   while (true) {
   //  colorSortRed();  //takes out reds
    // colorSortBlue(); //takes out blues
 
-
+    
    //paste whatever auton in here
+   //blueNegative();
    
   }
   
@@ -1709,7 +1817,7 @@ void opcontrol() {
 
         setIntakeMotors();
 
-       // setLadyBrown();
+        setLadyBrown();
 
         setDoinkerSolenoids();
 
