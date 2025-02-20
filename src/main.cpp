@@ -2019,12 +2019,17 @@ void statesRedPositive() {
 }
 
 void statesRedPositiveFAST() {
-    chassis.setPose(-48.039, -31.745, 120);
+    chassis.setPose(-48.425, -29.334, 115);
     //set everything 0
     setMogo(false);
     setDoinker(false);
 
-    chassis.moveToPoint(-13.4, -46.8, 1500, {.forwards = true}, true);
+    // to calculate, use point-slope form
+    // y2 - y1 = arctan(90-bearing) * (x2 - x1)
+    // where (x1, y1, bearing) is the starting position
+    // and (x2, y2) is the ending position
+    
+    chassis.moveToPoint(-15, -43.086, 1500, {.forwards = true}, true);
     setDoinker(true);
     pros::delay(200);
 
