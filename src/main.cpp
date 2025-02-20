@@ -2023,22 +2023,8 @@ void statesRedPositiveFAST() {
     //set everything 0
     setMogo(false);
     setDoinker(false);
-  //  setIntake(10000);
-    intake.move_voltage(12000);
 
-    //going to first stack and holding red ring
-    chassis.moveToPoint(-26.51, -43.72, 1000, {.forwards = true}, true);
-    pros::delay(250);
-    //setIntake(0);
-
-    //going to mid mogo rush
-    chassis.moveToPoint(-23.11, -46.7, 1000, {.forwards = true}, true); //move a bit to get donut in
-   // setIntake(0);
-   // intake.move_voltage(-12000);  //BECAUSE OF STUPID AHH BLUE
-
-    chassis.moveToPoint(-14.4, -46.8, 1000, {.forwards = true}, true);
-    //setIntake(0);
-    chassis.moveToPoint(-13.4, -46.8, 1000, {.forwards = true}, true);
+    chassis.moveToPoint(-13.4, -46.8, 1500, {.forwards = true}, true);
     setDoinker(true);
     pros::delay(200);
 
