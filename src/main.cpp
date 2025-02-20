@@ -199,7 +199,7 @@ void setDoinker(bool extend) {
 }
 
 void setDoinkerSolenoids() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
         extendPiston = !extendPiston;  // Toggle the state
         setDoinker(extendPiston);         // Apply the toggled state to pneumatics
         pros::delay(300);              // Delay to prevent multiple toggles from a single press
@@ -232,9 +232,14 @@ void setIntakeMotors() { //call this during opcontrol
 //lady brown stuff
 // Arm positions (potentiometer values)
 const int ARM_POSITIONS[] = {3889, 3430, 1830}; // Passive, Loading, Scoring
-
+const int NUM_POSITIONS = 3; // Total number of positions
 int targetPosition = -1; // -1 means no macro is running
 bool isManualControl = false; // Track manual movement
+int currentPhase = 0; // Tracks which phase we're on (index in ARM_POSITIONS)
+
+void moveArmToPosition(int index) {
+    targetPosition = ARM_POSITIONS[index];
+ } 
 
 // Function to set arm power (Using Velocity Instead of Voltage)
 void setLBPower(int power) {
@@ -246,16 +251,17 @@ void armControlTask(void* param) {
     while (true) {
         if (targetPosition != -1 && !isManualControl) { 
             int currentPos = lbSensor.get_value();
-           // int error = targetPosition - currentPos;
-           int error = currentPos - targetPosition;
-            int power = (error > 0) ? 100 : -100; // Velocity control (-100 to 100)
+     //       int error = currentPos - targetPosition; // Flipped error calculation
+            int error = targetPosition - currentPos;
 
-            // **FIX:** Slow down gradually when approaching target
-            if (abs(error) < 300) power = (error > 0) ? 50 : -50;
-            if (abs(error) < 150) power = (error > 0) ? 25 : -25;
+            int power = (error > 0) ? -100 : 100; // Flipped movement direction
 
-            // **FIX:** Stop when inside the target range AND ensure motor does not reverse direction
-            if (abs(error) < 50) { // Error threshold for stopping
+            // Slow down gradually when approaching target
+            if (abs(error) < 300) power = (error > 0) ? -50 : 50;
+            if (abs(error) < 150) power = (error > 0) ? -25 : 25;
+
+            // Stop when inside the target range
+            if (abs(error) < 50) {
                 power = 0;
                 targetPosition = -1; // Stop tracking macro once reached
             }
@@ -273,19 +279,25 @@ void setLadyBrown() {
     bool xPressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_X);
     bool bPressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
     
-    int manualPower = 100 * (xPressed - bPressed); // Using max 100 velocity instead of voltage
+    int manualPower = 160 * (xPressed - bPressed); // Using max 100 velocity instead of voltage
 
     if (manualPower != 0) {
         targetPosition = -1; // Cancel macros when manually controlling
         isManualControl = true; // Track manual mode
         setLBPower(manualPower);
     } else if (isManualControl) { 
-        // **FIX:** Stop movement when button is released
+        // Stop movement when button is released
         isManualControl = false;
         setLBPower(0);
     }
 
-    // **FIX:** Ensure macros actually set `targetPosition` properly
+    // **L1: Cycle Through Positions**
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) { //channge back to l1 possibly
+        currentPhase = (currentPhase + 1) % NUM_POSITIONS; // Cycle through 0 → 1 → 2 → 0
+        targetPosition = ARM_POSITIONS[currentPhase]; // Set target position
+    }
+
+    // Ensure macros actually set `targetPosition` properly
     if (!isManualControl) {
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
             targetPosition = ARM_POSITIONS[0]; // Passive
@@ -326,7 +338,8 @@ void initialize() {
             pros::lcd::print(4, "LB sensor: %i", lbSensor.get_value());
             pros::lcd::print(5, "Target Pos: %i", targetPosition);
             pros::lcd::print(6, "Manual Mode: %i", isManualControl);
-            pros::lcd::print(7, "Error: %i", targetPosition - lbSensor.get_value());
+            pros::lcd::print(7, "Error: %i", lbSensor.get_value() - targetPosition);
+            pros::lcd::print(8, "Current Phase: %i", currentPhase); // **Show which phase we're on**
 
             pros::delay(50);
         }
@@ -904,16 +917,6 @@ void test() {
     setMogo(true);
 }
 
-void progSkills3() {
-    setIntake(0);
-    setMogo(false);
-
-    chassis.setPose(-58, 0, 270);
-    chassis.turnToHeading(180, 5000, {}, false);
-
-}
-
-
 void progSkillsSimple() {
     //set everything 0
     setIntake(0);
@@ -1300,6 +1303,177 @@ void redNegative() {
   //  setMogo(false);
 
 }//redNegative
+
+void progSkills3() {
+    chassis.setPose(-58, 0, 90);
+    setMogo(false);
+    moveArmToPosition(0);
+ 
+ 
+    //putting ring on stake with conveyer
+    setIntake(-12000);
+    pros::delay(300);
+ 
+ 
+    //getting mogo
+    setIntake(12000);
+    chassis.moveToPoint(-46, 0, 5000, {.forwards = true}, false);
+    chassis.turnToHeading(0, 5000, {}, false);
+    chassis.moveToPoint(-47, -12, 5000, {.forwards = false}, false);
+    setMogo(true);
+    pros::delay(300);
+ 
+ 
+    //get closest donut
+    chassis.turnToPoint(-24,-24, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-24, -24, 5000, {.forwards = true}, false);
+    pros::delay(300);
+ 
+ 
+    //set lady brown get red donut near positive blue corner
+    moveArmToPosition(1);
+    chassis.turnToPoint(24,-47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(24, -47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+ 
+ 
+    //put ring on stake
+    chassis.turnToPoint(0,-47, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    chassis.moveToPoint(0, -47, 5000, {.forwards = false}, false);
+    pros::delay(300);
+    chassis.turnToHeading(180, 5000, {}, false);
+    chassis.moveToPoint(0, -57, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    moveArmToPosition(2);
+    pros::delay(500);
+    moveArmToPosition(0);
+ 
+ 
+    //move right for nearest ring, get next 3 rings, set down mogo
+    chassis.moveToPoint(0, -47, 5000, {.forwards = false}, false);
+    chassis.turnToHeading(270, 5000, {}, false);
+    chassis.moveToPoint(-59, -47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(-47,-59, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-47, -59, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(-58,-59, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    setMogo(false);
+ 
+ 
+    //go to other side of field, get clamp
+    chassis.turnToPoint(47,-47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    moveArmToPosition(1);
+    chassis.moveToPoint(47, -47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    setIntake(0);
+    chassis.turnToPoint(62,-21, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    chassis.moveToPoint(62, -21, 5000, {.forwards = false}, false);
+    setMogo(true);
+    pros::delay(300);
+    chassis.turnToHeading(180, 5000, {}, false);
+ 
+ 
+    //extend doinker, sweep rings out of corner
+    setDoinker(true);
+    chassis.moveToPoint(63, -50, 5000, {.forwards = true}, false);
+    chassis.turnToHeading(270, 5000, {}, false);
+    setDoinker(false);
+    setIntake(12000);
+ 
+ 
+    //release mogo, get another mogo
+    chassis.turnToPoint(61,-58, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    chassis.moveToPoint(61, -58, 5000, {.forwards = false}, false);
+    setMogo(false);
+    chassis.turnToPoint(47,-47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(47, -47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToHeading(180, 5000, {}, false);
+    chassis.moveToPoint(47, -12, 5000, {.forwards = false}, false);
+    setMogo(true);
+    pros::delay(300);
+ 
+ 
+    //put ring on stake
+    chassis.moveToPoint(47, 0, 5000, {.forwards = false}, false);
+    chassis.turnToHeading(90, 5000, {}, false);
+    chassis.moveToPoint(58, 0, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    moveArmToPosition(2);
+    pros::delay(300);
+    moveArmToPosition(0);
+ 
+ 
+    //go down field then across field to get rings
+    chassis.moveToPoint(46, 0, 5000, {.forwards = false}, false);
+    chassis.turnToPoint(24,-24, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(24, -24, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(-47,47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-47, 47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToHeading(270, 5000, {}, false);
+    chassis.moveToPoint(-58, 47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(-47,59, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-47, 59, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToHeading(315, 5000, {}, false);
+    chassis.moveToPoint(-58, 59, 5000, {.forwards = false}, false);
+    pros::delay(300);
+    setMogo(false);
+ 
+ 
+    //more ladybrown bs
+    moveArmToPosition(1);
+    chassis.turnToPoint(-24,47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-24, 47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(-40,32, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    chassis.moveToPoint(-40, 32, 5000, {.forwards = false}, false);
+    pros::delay(300);
+    chassis.turnToPoint(0,52, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    chassis.moveToPoint(0, 52, 5000, {.forwards = false}, false);
+    pros::delay(300);
+    chassis.turnToHeading(0, 5000, {}, false);
+    chassis.moveToPoint(0, 57, 5000, {.forwards = false}, false);
+    moveArmToPosition(2);
+    pros::delay(300);
+    moveArmToPosition(0);
+ 
+ 
+    //idk anymore man make it stop
+    chassis.turnToPoint(23,47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(23, 47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(23,23, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(23, 23, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(47,47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(47, 47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(59,47, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(59, 47, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(47,59, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(47, 59, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToPoint(32,59, 1000, {.forwards = false, .maxSpeed= 127}, false);
+    chassis.moveToPoint(32, 59, 5000, {.forwards = false}, false);
+    pros::delay(300);
+    setDoinker(true);
+    chassis.turnToPoint(54,59, 1000, {.forwards = true, .maxSpeed= 127}, false);
+    chassis.moveToPoint(54, 59, 5000, {.forwards = true}, false);
+    pros::delay(300);
+    chassis.turnToHeading(225, 5000, {}, false);
+    setMogo(false);
+ }
+ 
+ 
+ 
+ 
+ 
 
 void redPositive() {
     //set everything 0
@@ -1777,12 +1951,156 @@ void redPositiveElim() {
    // setMogo(false);
 }
 
+
+//STATES AUTONS MADE BY DNYANESH ON 2/19/25
+void statesRedPositive() {
+    chassis.setPose(-48.039, -31.745, 120);
+    //set everything 0
+    setMogo(false);
+    setDoinker(false);
+    setIntake(10000);
+
+    //going to first stack and holding red ring
+    chassis.moveToPoint(-26.51, -43.72, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    pros::delay(250);
+    //setIntake(0);
+
+    //going to mid mogo rush
+    chassis.moveToPoint(-23.11, -46.7, 1000, {.forwards = true, .maxSpeed = 65}, false); //move a bit to get donut in
+    setIntake(0);
+    intake.move_voltage(-12000);  //BECAUSE OF STUPID AHH BLUE
+
+    chassis.moveToPoint(-14.4, -46.8, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    //setIntake(0);
+    chassis.moveToPoint(-13.4, -46.8, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    setDoinker(true);
+    pros::delay(200);
+
+    //goingbackwards with mogo
+    chassis.moveToPoint(-28, -44.36, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    //chassis.moveToPose(-28, -44.36, 90, 1000, {.forwards = false, .maxSpeed = 40}, false);
+    chassis.turnToHeading(96, 1000, {.maxSpeed = 50}, false);
+    setDoinker(false);
+    pros::delay(200);
+    
+    //going to mogo and scoring
+    chassis.turnToHeading(270, 1000, {.maxSpeed = 65}, false);
+    chassis.moveToPoint(-24.5, -42.36, 1000, {.forwards = false, .maxSpeed = 50}, false); //going to mogo
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(100);
+    setIntake(10000);
+    pros::delay(500);
+
+    //moving forward to align with next mogo
+    chassis.moveToPoint(-23.6, -42.36, 1000, {.forwards = true, .maxSpeed = 65}, false); //going to mogo
+
+    //letting go of old mogo
+    setIntake(0);
+    setMogo(false);
+    pros::delay(100);
+
+    //going to other mogo and clamping
+    chassis.turnToPoint(-23.6, -23.1, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-23.6, -23.1, 1000, {.forwards = false, .maxSpeed = 50}, false);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(100);
+    setIntake(10000);
+
+    //going to preload and scoring
+    chassis.moveToPoint(-62.5, -23.9, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    
+    //elims (go to corner to get ready to clear)
+
+    
+
+
+}
+
+void statesRedPositiveFAST() {
+    chassis.setPose(-48.039, -31.745, 120);
+    //set everything 0
+    setMogo(false);
+    setDoinker(false);
+  //  setIntake(10000);
+    intake.move_voltage(12000);
+
+    //going to first stack and holding red ring
+    chassis.moveToPoint(-26.51, -43.72, 1000, {.forwards = true}, true);
+    pros::delay(250);
+    //setIntake(0);
+
+    //going to mid mogo rush
+    chassis.moveToPoint(-23.11, -46.7, 1000, {.forwards = true}, true); //move a bit to get donut in
+   // setIntake(0);
+   // intake.move_voltage(-12000);  //BECAUSE OF STUPID AHH BLUE
+
+    chassis.moveToPoint(-14.4, -46.8, 1000, {.forwards = true}, true);
+    //setIntake(0);
+    chassis.moveToPoint(-13.4, -46.8, 1000, {.forwards = true}, true);
+    setDoinker(true);
+    pros::delay(200);
+
+    //goingbackwards with mogo
+    chassis.moveToPoint(-28, -44.36, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    //chassis.moveToPose(-28, -44.36, 90, 1000, {.forwards = false, .maxSpeed = 40}, false);
+    chassis.turnToHeading(96, 1000, {.maxSpeed = 50}, false);
+    setDoinker(false);
+    pros::delay(200);
+    
+    //going to mogo and scoring
+    chassis.turnToHeading(270, 1000, {.maxSpeed = 65}, false);
+    chassis.moveToPoint(-24.5, -42.36, 1000, {.forwards = false, .maxSpeed = 50}, false); //going to mogo
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(100);
+   // setIntake(10000);
+   conveyor.move_voltage(10000); //scoring 1st ring
+    pros::delay(300);
+
+    //moving forward to align with next mogo
+    chassis.moveToPoint(-23.6, -42.36, 1000, {.forwards = true, .maxSpeed = 65}, false); //going to mogo
+
+    //letting go of old mogo
+    setIntake(0);
+
+    setMogo(false);
+    pros::delay(100);
+
+    //going to other mogo and clamping
+    chassis.turnToPoint(-23.6, -23.1, 1000, {.forwards = false, .maxSpeed = 65}, false);
+    chassis.moveToPoint(-23.6, -23.1, 1000, {.forwards = false, .maxSpeed = 50}, false);
+    pros::delay(200);
+    setMogo(true);
+    pros::delay(100);
+    setIntake(10000);
+
+    //going to preload and scoring
+   // chassis.moveToPoint(-62.5, -23.9, 1000, {.forwards = true, .maxSpeed = 65}, false);
+    
+    //elims (go to corner to get ready to clear)
+
+    
+    
+
+}
+
+
+void statesBluePositive() {
+
+}
+
 void autonomous() {
     //setting lb to hold..?
     ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
+   // statesRedPositive();
 
-  while (true) {
+    statesRedPositiveFAST();
+
+    
+  //while (true) {
   //  colorSortRed();  //takes out reds
    // colorSortBlue(); //takes out blues
 
@@ -1790,7 +2108,7 @@ void autonomous() {
    //paste whatever auton in here
    //blueNegative();
    
-  }
+ // }
   
     // moveAuton();
 //  progSkillsSimple(); //tries to get one ring on 2 mogos and 3 mogos into corners
